@@ -1,0 +1,32 @@
+version: '3.9'
+services:
+  alist_leech_bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: alist_leech_bot
+    container_name: alist_leech_bot
+    environment:
+      - ALIST_HOST=http://172.18.0.2:5244
+      - ALIST_TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwicHdkX3RzIjoxNzEzODYzNTU3LCJleHAiOjE3NDI1MDYwOTksIm5iZiI6MTcyNzI3ODA5OSwiaWF0IjoxNzI3Mjc4MDk5fQ.klPD2gY7vSOZe_4OH9WpIi0uv2-YtQPWcl3CsHWDhZo
+      - MAXIMUM_LEECH_WORKER=2
+      - MAXIMUM_SYNC_WORKER=5
+      - BOT_DOWNLOAD_LOCATION=/root/download/
+      - WRITE_STREAM_CONNECT_TIMEOUT=300
+      - BOT_LOGS_LOCATION=/root/logs/
+      - REDIS_HOST=172.18.0.9
+      - MONGO_HOST=172.18.0.10
+      - SHOULD_USE_DATETIME_CATEGORY=True
+      - MAXIMUM_QUEUE_SIZE=2000
+      - REDIS_PASSWORD=redis
+      - C_FORCE_ROOT=true
+    restart: always
+    networks:
+      - repositories_default
+    volumes:
+      - "/root/download/:/root/download/"
+      - "/root/logs/:/root/logs/"
+
+networks:
+    repositories_default:
+        external: true

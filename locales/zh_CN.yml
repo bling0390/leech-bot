@@ -1,0 +1,417 @@
+# 通用消息
+common:
+  success: "✅ 成功"
+  failure: "❌ 失败"
+  error: "❌ 错误: {error}"
+  loading: "🔄 正在处理..."
+  confirm: "确认"
+  cancel: "取消"
+  yes: "是"
+  no: "否"
+  
+# 语言设置
+language:
+  current: "当前语言: {language}"
+  changed: "✅ 语言已切换为: {language}"
+  invalid: "❌ 不支持的语言: {language}"
+  menu_title: "🌐 选择语言"
+  select_prompt: "请选择您偏好的语言:"
+  
+# 磁盘监控
+disk:
+  monitor:
+    status: "📊 磁盘监控状态"
+    started: "✅ 磁盘监控已启动"
+    stopped: "✅ 磁盘监控已停止"
+    already_running: "⚠️ 磁盘监控已在运行"
+    not_running: "⚠️ 磁盘监控未运行"
+    config_info: "配置信息"
+    auto_start_enabled: "✅ 磁盘监控自动启动已启用"
+    auto_start_disabled: "❌ 磁盘监控自动启动已禁用"
+    alert_disabled: "❌ 磁盘告警已禁用，跳过监控启动"
+    auto_start_success: "✅ 磁盘监控服务自动启动成功"
+    auto_start_failed: "❌ 磁盘监控服务自动启动失败: {error}"
+    check_failed: "❌ 检查磁盘空间失败: {error}"
+    format_alert_title: "⚠️ 磁盘空间告警"
+    format_alert_location: "📍 位置: {location}"
+    format_alert_free_space: "💾 剩余空间: {free_space}"
+    format_alert_usage: "📊 使用率: {usage}%"
+    format_alert_threshold: "🚨 告警阈值: {threshold}"
+    format_alert_action: "请选择处理方式："
+    cooldown_skip: "告警冷却期内，跳过告警 (剩余 {seconds} 秒)"
+    service_started: "磁盘监控服务已启动 (阈值: {threshold}GB, 间隔: {interval}秒)"
+    service_stopped: "磁盘监控服务已停止"
+    service_error: "磁盘监控出错: {error}"
+    cooldown_reset: "告警冷却时间已重置"
+  
+  space_warning: "⚠️ 磁盘空间警告\n位置: {location}\n剩余空间: {space}"
+  
+  status:
+    title: "📊 磁盘状态报告"
+    location: "📍 监控位置"
+    free_space: "💾 剩余空间"
+    used_percent: "📈 使用率"
+    total_space: "💿 总空间"
+    used_space: "📂 已使用"
+    file_count: "📁 文件数量"
+    dir_count: "📂 目录数量"
+    space_normal: "✅ 空间正常"
+    space_low: "⚠️ 空间不足"
+    service_running: "🟢 运行中"
+    service_stopped: "🔴 未运行"
+  
+  clean:
+    start: "🔄 正在清理下载目录..."
+    complete: "✅ 磁盘清理完成"
+    failed: "❌ 清理失败\n原因: {reason}"
+    old_files: "🔄 正在清理 {days} 天前的文件..."
+    old_complete: "✅ 旧文件清理完成"
+    freed_space: "总计释放空间"
+    files_removed: "📁 删除文件: {count} 个"
+    cleanup_in_progress: "正在清理下载目录..."
+    cleanup_old_files: "正在清理 {days} 天前的文件..."
+    cleanup_scope: "🗓️ 清理范围"
+    deleted_files: "📁 删除文件"
+    freed_space_amount: "💾 释放空间"
+    remaining_files: "📁 剩余文件"
+    remaining_space: "💾 剩余空间"
+    cleanup_old_complete: "✅ 旧文件清理完成"
+    cleanup_old_summary: "🧹 清理了超过 {days} 天的旧文件"
+    cleanup_failed: "❌ 清理失败"
+    unknown_error: "未知错误"
+    
+  alerts:
+    title: "📊 最近24小时磁盘告警历史"
+    no_alerts: "✅ 最近24小时无磁盘告警"
+    active: "🔴 活跃"
+    resolved: "✅ 已解决"
+    ignored: "⚠️ 已忽略"
+    alert_not_found: "告警记录不存在"
+    action_unknown: "未知操作"
+    callback_failed: "处理失败: {error}"
+    clear_directory_action: "清空下载目录"
+    clearing_directory: "正在清理下载目录..."
+    clear_complete: "✅ 清理完成，释放 {space} 空间"
+    clear_failed: "❌ 清理失败: {error}"
+    adjust_frequency_action: "降低任务频率"
+    adjusting_frequency: "正在调整任务频率..."
+    frequency_adjusted: "✅ 任务频率已降低"
+    adjust_failed: "❌ 调整失败: {error}"
+    show_details_title: "📊 磁盘详细信息"
+    download_dir_info: "下载目录信息:"
+    file_type_distribution: "文件类型分布:"
+    alert_ignored: "✅ 告警已忽略"
+    recovery_button: "🔄 恢复任务频率"
+    processing_in_progress: "正在处理中..."
+    freed_space_label: "释放空间: {space}"
+    details_label: "详情: {details}"
+    send_test_alert: "✅ 测试告警已发送"
+    
+    # 表格相关
+    table:
+      time_col: "时间"
+      status_col: "状态"
+      space_usage_col: "空间/使用"
+      action_col: "处理"
+    
+    # 状态显示
+    summary_text: "📝 显示最近 {count} 条告警记录"
+    status_legend: "🔴 活跃 | ✅ 已解决 | ⚠️ 已忽略"
+    
+    # 告警处理消息
+    alert_sent: "磁盘告警已发送到 {chat_id}"
+    send_failed: "发送磁盘告警失败: {error}"
+    callback_error: "处理回调失败: {error}"
+    
+    # 清理操作反馈
+    freed_space_notes: "释放空间: {space}GB"
+    clear_success_feedback: "✅ 清理完成，释放 {space}GB 空间"
+    clear_failed_feedback: "❌ 清理失败: {error}"
+    
+    # 频率调整反馈
+    adjust_success_feedback: "✅ 任务频率已降低"
+    adjust_failed_feedback: "❌ 调整失败: {error}"
+    recover_success_feedback: "✅ 任务频率已恢复"
+    recover_failed_feedback: "❌ 恢复失败: {error}"
+    
+    # 详细信息显示
+    detail_location: "📍 位置: {location}"
+    detail_free_space: "💾 剩余空间: {space}"
+    detail_usage: "📈 使用率: {usage}%"
+    detail_total_space: "💿 总空间: {space}"
+    detail_used_space: "📂 已使用: {space}"
+    detail_occupied_space: "💾 占用空间: {space}"
+    detail_file_type_item: "  {ext}: {count} 个"
+    
+    # 忽略告警
+    ignore_title: "⚠️ 告警已忽略"
+    ignore_operator: "👤 操作人: {user}"
+    ignore_time: "🕐 时间: {time}"
+    ignore_feedback: "告警已忽略"
+    
+    # 恢复操作
+    recover_title: "✅ 任务频率已恢复"
+    recover_operator: "👤 操作人: {user}" 
+    recover_time: "🕐 时间: {time}"
+    recover_feedback: "✅ 任务频率已恢复"
+    
+    # 告警处理总结
+    handled_title: "✅ 告警已处理"
+    handled_action: "📍 操作: {action}"
+    handled_operator: "👤 处理人: {user}"
+    handled_time: "🕐 处理时间: {time}"
+    handled_details: "📝 详细信息: {details}"
+    
+  alert_template: "<b>⚠️ 磁盘空间告警</b>\n\n位置: {location}\n剩余空间: {free_space}\n使用率: {used_percent}%"
+  
+  files_count:
+    one: "{count} 个文件"
+    other: "{count} 个文件"
+    
+  commands:
+    help: |
+      <b>💿 磁盘管理命令</b>
+      
+      <b>可用子命令:</b>
+      • <code>/disk status</code> - 查看磁盘空间状态
+      • <code>/disk start</code> - 启动磁盘监控
+      • <code>/disk stop</code> - 停止磁盘监控
+      • <code>/disk clean</code> - 清理下载目录
+      • <code>/disk clean 7</code> - 清理7天前的文件
+      • <code>/disk alerts</code> - 查看最近告警
+      
+      <b>示例:</b>
+      <code>/disk status</code>
+      <code>/disk clean 7</code>
+      
+      <b>📱 点击下方按钮快速执行命令:</b>
+      
+  buttons:
+    status: "📊 查看状态"
+    start: "▶️ 启动监控"
+    stop: "⏹️ 停止监控"
+    clean: "🗏️ 清理目录"
+    alerts: "🚨 查看告警"
+    clean_old: "🗑️ 清理7天"
+    close: "❌ 关闭菜单"
+    clear_directory: "🗑 清空下载目录"
+    adjust_task_frequency: "⚙️ 降低任务频率"
+    view_details: "📊 查看详情"
+    ignore_alert: "❌ 忽略"
+    
+  config:
+    validation:
+      threshold_invalid: "DISK_ALERT_THRESHOLD 必须是有效的整数"
+      threshold_required: "DISK_ALERT_THRESHOLD 必须大于0"
+      threshold_too_small: "DISK_ALERT_THRESHOLD 小于1GB，可能过于敏感"
+      threshold_too_large: "DISK_ALERT_THRESHOLD 大于100GB，可能错过重要告警"
+      enabled_invalid: "DISK_ALERT_ENABLED 必须是布尔值或 'true'/'false' 字符串"
+      auto_start_invalid: "DISK_MONITOR_AUTO_START 必须是布尔值或 'true'/'false' 字符串"
+      
+  table:
+    item: "项目"
+    value: "数值"
+    status: "状态项目"
+    current_status: "当前状态"
+    disk_info: "磁盘空间信息:"
+    download_dir_info: "下载目录信息:"
+    system_status: "系统状态:"
+    config_table: "Configuration:"
+    clean_before: "清理前"
+    clean_after: "清理后"
+    change: "变化"
+    file_count_item: "📁 文件数"
+    storage_space_item: "💾 占用空间"
+    clean_stats: "清理统计"
+
+# 网络监控
+network:
+  monitor:
+    status: "📊 网络监控状态"
+    started: "✅ 网络监控已启动"
+    stopped: "✅ 网络监控已停止"
+    already_running: "⚠️ 网络监控已在运行"
+    not_running: "⚠️ 网络监控未运行"
+    service_not_initialized: "⚠️ 网络监控服务未初始化"
+    auto_delete_info: "消息将在5秒后自动删除"
+    
+    # 服务日志消息
+    service_started: "网络监控服务已启动 (检查间隔: {interval}秒)"
+    service_stopped: "网络监控服务已停止"
+    service_error: "网络监控出错: {error}"
+    history_reset: "网络监控历史数据已重置"
+    get_interfaces_failed: "获取网络接口失败: {error}"
+    get_stats_failed: "获取网络统计失败: {error}"
+    get_connections_failed: "获取连接统计失败: {error}"
+    interface_not_found: "接口 {interface} 不存在"
+    
+    # 命令描述和参数
+    main_command_desc: "网络监控命令"
+    subcommand_help: "子命令: status, interfaces, connections, start, stop 等"
+    args_help: "子命令参数"
+    
+  # 快捷按钮
+  buttons:
+    status: "📊 网络状态"
+    interfaces: "🌐 接口信息"
+    connections: "🔗 连接统计"
+    start: "▶️ 启动监控"
+    stop: "⏹️ 停止监控"
+    reset: "🔄 重置统计"
+    close: "❌ 关闭菜单"
+    
+  # 命令帮助
+  commands:
+    help: |
+      <b>🌐 网络监控命令</b>
+
+      <b>可用子命令:</b>
+      • <code>/network status</code> - 查看网络状态和带宽
+      • <code>/network interfaces</code> - 查看网络接口信息
+      • <code>/network connections</code> - 查看连接统计
+      • <code>/network start</code> - 启动网络监控
+      • <code>/network stop</code> - 停止网络监控
+      • <code>/network reset</code> - 重置监控统计
+
+      <b>示例:</b>
+      <code>/network status</code>
+      <code>/network interfaces</code>
+
+      <b>📱 点击下方按钮快速执行命令:</b>
+      
+  # 状态报告
+  status:
+    title: "🌐 网络状态报告"
+    realtime_status: "实时网络状态:"
+    bandwidth_stats: "带宽统计:"
+    monitor_status: "监控状态:"
+    get_info_failed: "❌ 无法获取网络接口信息"
+    get_connections_failed: "❌ 获取连接信息失败: {error}"
+    
+  # 表格字段
+  table:
+    status_item: "状态项目"
+    current_value: "当前值"
+    stats_type: "统计类型"
+    upload: "上传"
+    download: "下载"
+    monitor_item: "监控项目"
+    status: "状态"
+    interface_name: "接口名称"
+    sent_data: "发送数据"
+    received_data: "接收数据"
+    connection_type: "连接类型"
+    count: "数量"
+    config_item: "配置项目"
+    setting_value: "设置值"
+    status_info: "状态信息"
+    current_status: "当前状态"
+    result: "结果"
+    reset_item: "重置项目"
+    
+  # 状态数据项
+  data:
+    upload_speed: "📤 上传速度"
+    download_speed: "📥 下载速度"
+    total_bandwidth: "📊 总带宽"
+    total_sent: "📤 总发送"
+    total_received: "📥 总接收"
+    error: "❌ 错误"
+    five_min_avg: "5分钟均值"
+    peak_bandwidth: "峰值带宽"
+    monitor_service: "📊 监控服务"
+    data_points: "📈 数据点数"
+    service_running: "🟢 运行中"
+    service_stopped: "🔴 未运行"
+    already_running_status: "🟢 运行中"
+    operation_result: "⚠️ 操作结果"
+    already_running_text: "已在运行"
+    
+  # 连接统计
+  connections:
+    title: "🔗 网络连接统计"
+    stats_title: "连接状态统计:"
+    total_connections: "🔗 总连接数"
+    tcp_connections: "📡 TCP连接"
+    udp_connections: "📶 UDP连接"
+    listening_ports: "🎯 监听端口"
+    established_connections: "✅ 已建立连接"
+    time_wait_connections: "⏳ 等待关闭"
+    
+  # 接口信息
+  interfaces:
+    title: "🌐 网络接口信息"
+    traffic_stats: "接口流量统计:"
+    display_note: "📝 显示前 {count} 个接口"
+    
+  # 监控控制
+  control:
+    start_success: "✅ 网络监控启动成功"
+    config_info: "监控配置信息:"
+    check_interval: "⏱ 检查间隔"
+    seconds: "{seconds}秒"
+    history_records: "📊 历史记录"
+    data_points_unit: "{size}个点"
+    initial_points: "📈 数据点数"
+    service_status: "🟢 服务状态"
+    started_status: "已启动"
+    stop_success: "✅ 网络监控已停止"
+    preserved_data: "📈 保留数据"
+    reset_success: "✅ 网络统计已重置"
+    cleaned_data: "📈 清理数据"
+    reset_status: "🔄 重置状态"
+    success_status: "✅ 成功"
+    current_data: "📊 当前数据"
+    zero_points: "0个点"
+    
+  # 格式化工具
+  format:
+    days: "天"
+    hours: "小时"
+    minutes: "分钟"
+    
+# 菜单
+menu:
+  main_title: "🎯 主菜单"
+  select_option: "请选择操作:"
+  
+# 错误消息
+errors:
+  permission_denied: "❌ 权限不足"
+  invalid_command: "❌ 无效的命令"
+  operation_failed: "❌ 操作失败: {reason}"
+  file_not_found: "❌ 文件未找到: {file}"
+  connection_error: "❌ 连接错误: {error}"
+  
+# 成功消息  
+success:
+  operation_complete: "✅ 操作完成"
+  file_downloaded: "✅ 文件下载完成: {file}"
+  file_uploaded: "✅ 文件上传完成: {file}"
+  settings_saved: "✅ 设置已保存"
+
+# Leech 命令
+leech:
+  prompt:
+    destination_selection: "根据用户选择设置目标ID"
+    token_acquisition: "获取token"
+    channel_button: "添加默认频道按钮" 
+    private_chat_button: "添加私聊按钮"
+  
+  common:
+    processing: "正在处理..."
+    select_destination: "选择目标位置"
+    current_setting: "当前设置: {setting}"
+    
+  upload:
+    tool_not_selected: "上传工具未选择"
+    destination_not_set: "目标路径未设置"
+    alist_storage_required: "需要选择AList存储路径"
+    rclone_storage_required: "需要选择Rclone存储路径"
+    telegram_destination_required: "需要选择Telegram目标"
+    
+  buttons:
+    default_channel: "默认频道"
+    private_chat: "私人聊天"
+    select_storage: "选择存储"
+    confirm_setting: "确认设置"

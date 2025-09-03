@@ -1,0 +1,417 @@
+# Common messages
+common:
+  success: "✅ Success"
+  failure: "❌ Failure"
+  error: "❌ Error: {error}"
+  loading: "🔄 Processing..."
+  confirm: "Confirm"
+  cancel: "Cancel"
+  yes: "Yes"
+  no: "No"
+  
+# Language settings
+language:
+  current: "Current language: {language}"
+  changed: "✅ Language changed to: {language}"
+  invalid: "❌ Unsupported language: {language}"
+  menu_title: "🌐 Select Language"
+  select_prompt: "Please select your preferred language:"
+  
+# Disk monitoring
+disk:
+  monitor:
+    status: "📊 Disk Monitor Status"
+    started: "✅ Disk monitor started"
+    stopped: "✅ Disk monitor stopped"
+    already_running: "⚠️ Disk monitor is already running"
+    not_running: "⚠️ Disk monitor is not running"
+    config_info: "Configuration Info"
+    auto_start_enabled: "✅ Disk monitor auto-start enabled"
+    auto_start_disabled: "❌ Disk monitor auto-start disabled"
+    alert_disabled: "❌ Disk alerts disabled, skipping monitor startup"
+    auto_start_success: "✅ Disk monitor service auto-started successfully"
+    auto_start_failed: "❌ Disk monitor service auto-start failed: {error}"
+    check_failed: "❌ Disk space check failed: {error}"
+    format_alert_title: "⚠️ Disk Space Alert"
+    format_alert_location: "📍 Location: {location}"
+    format_alert_free_space: "💾 Free Space: {free_space}"
+    format_alert_usage: "📊 Usage: {usage}%"
+    format_alert_threshold: "🚨 Alert Threshold: {threshold}"
+    format_alert_action: "Please select action:"
+    cooldown_skip: "Alert cooldown active, skipping alert ({seconds}s remaining)"
+    service_started: "Disk monitor service started (threshold: {threshold}GB, interval: {interval}s)"
+    service_stopped: "Disk monitor service stopped"
+    service_error: "Disk monitor error: {error}"
+    cooldown_reset: "Alert cooldown time reset"
+  
+  space_warning: "⚠️ Disk Space Warning\nLocation: {location}\nFree Space: {space}"
+  
+  status:
+    title: "📊 Disk Status Report"
+    location: "📍 Monitor Location"
+    free_space: "💾 Free Space"
+    used_percent: "📈 Usage"
+    total_space: "💿 Total Space"
+    used_space: "📂 Used Space"
+    file_count: "📁 File Count"
+    dir_count: "📂 Directory Count"
+    space_normal: "✅ Space Normal"
+    space_low: "⚠️ Low Space"
+    service_running: "🟢 Running"
+    service_stopped: "🔴 Stopped"
+  
+  clean:
+    start: "🔄 Cleaning download directory..."
+    complete: "✅ Disk cleanup complete"
+    failed: "❌ Cleanup failed\nReason: {reason}"
+    old_files: "🔄 Cleaning files older than {days} days..."
+    old_complete: "✅ Old files cleanup complete"
+    freed_space: "Total freed space"
+    files_removed: "📁 Files removed: {count}"
+    cleanup_in_progress: "Cleaning download directory..."
+    cleanup_old_files: "Cleaning files older than {days} days..."
+    cleanup_scope: "🗓️ Cleanup Scope"
+    deleted_files: "📁 Files Deleted"
+    freed_space_amount: "💾 Space Freed"
+    remaining_files: "📁 Files Remaining"
+    remaining_space: "💾 Space Remaining"
+    cleanup_old_complete: "✅ Old files cleanup complete"
+    cleanup_old_summary: "🧹 Cleaned files older than {days} days"
+    cleanup_failed: "❌ Cleanup failed"
+    unknown_error: "Unknown error"
+    
+  alerts:
+    title: "📊 Disk Alerts - Last 24 Hours"
+    no_alerts: "✅ No disk alerts in the last 24 hours"
+    active: "🔴 Active"
+    resolved: "✅ Resolved"
+    ignored: "⚠️ Ignored"
+    alert_not_found: "Alert record not found"
+    action_unknown: "Unknown action"
+    callback_failed: "Processing failed: {error}"
+    clear_directory_action: "Clear download directory"
+    clearing_directory: "Clearing download directory..."
+    clear_complete: "✅ Cleanup complete, freed {space} space"
+    clear_failed: "❌ Cleanup failed: {error}"
+    adjust_frequency_action: "Reduce task frequency"
+    adjusting_frequency: "Adjusting task frequency..."
+    frequency_adjusted: "✅ Task frequency reduced"
+    adjust_failed: "❌ Adjustment failed: {error}"
+    show_details_title: "📊 Detailed Disk Information"
+    download_dir_info: "Download Directory Info:"
+    file_type_distribution: "File Type Distribution:"
+    alert_ignored: "✅ Alert ignored"
+    recovery_button: "🔄 Restore Task Frequency"
+    processing_in_progress: "Processing..."
+    freed_space_label: "Freed space: {space}"
+    details_label: "Details: {details}"
+    send_test_alert: "✅ Test alert sent"
+    
+    # Table related
+    table:
+      time_col: "Time"
+      status_col: "Status"
+      space_usage_col: "Space/Usage"
+      action_col: "Action"
+    
+    # Status display
+    summary_text: "📝 Showing last {count} alert records"
+    status_legend: "🔴 Active | ✅ Resolved | ⚠️ Ignored"
+    
+    # Alert handling messages
+    alert_sent: "Disk alert sent to {chat_id}"
+    send_failed: "Failed to send disk alert: {error}"
+    callback_error: "Callback handling failed: {error}"
+    
+    # Cleanup operation feedback
+    freed_space_notes: "Freed space: {space}GB"
+    clear_success_feedback: "✅ Cleanup complete, freed {space}GB space"
+    clear_failed_feedback: "❌ Cleanup failed: {error}"
+    
+    # Frequency adjustment feedback
+    adjust_success_feedback: "✅ Task frequency reduced"
+    adjust_failed_feedback: "❌ Adjustment failed: {error}"
+    recover_success_feedback: "✅ Task frequency restored"
+    recover_failed_feedback: "❌ Recovery failed: {error}"
+    
+    # Detail information display
+    detail_location: "📍 Location: {location}"
+    detail_free_space: "💾 Free Space: {space}"
+    detail_usage: "📈 Usage: {usage}%"
+    detail_total_space: "💿 Total Space: {space}"
+    detail_used_space: "📂 Used Space: {space}"
+    detail_occupied_space: "💾 Occupied Space: {space}"
+    detail_file_type_item: "  {ext}: {count} files"
+    
+    # Ignore alert
+    ignore_title: "⚠️ Alert Ignored"
+    ignore_operator: "👤 Operator: {user}"
+    ignore_time: "🕐 Time: {time}"
+    ignore_feedback: "Alert ignored"
+    
+    # Recovery operation
+    recover_title: "✅ Task Frequency Restored"
+    recover_operator: "👤 Operator: {user}"
+    recover_time: "🕐 Time: {time}"
+    recover_feedback: "✅ Task frequency restored"
+    
+    # Alert handling summary
+    handled_title: "✅ Alert Handled"
+    handled_action: "📍 Action: {action}"
+    handled_operator: "👤 Operator: {user}"
+    handled_time: "🕐 Handled at: {time}"
+    handled_details: "📝 Details: {details}"
+    
+  alert_template: "<b>⚠️ Disk Space Alert</b>\n\nLocation: {location}\nFree Space: {free_space}\nUsage: {used_percent}%"
+  
+  files_count:
+    one: "{count} file"
+    other: "{count} files"
+    
+  commands:
+    help: |
+      <b>💿 Disk Management Commands</b>
+      
+      <b>Available subcommands:</b>
+      • <code>/disk status</code> - View disk space status
+      • <code>/disk start</code> - Start disk monitoring
+      • <code>/disk stop</code> - Stop disk monitoring
+      • <code>/disk clean</code> - Clean download directory
+      • <code>/disk clean 7</code> - Clean files older than 7 days
+      • <code>/disk alerts</code> - View recent alerts
+      
+      <b>Examples:</b>
+      <code>/disk status</code>
+      <code>/disk clean 7</code>
+      
+      <b>📱 Click buttons below for quick actions:</b>
+      
+  buttons:
+    status: "📊 View Status"
+    start: "▶️ Start Monitor"
+    stop: "⏹️ Stop Monitor"
+    clean: "🗏️ Clean Directory"
+    alerts: "🚨 View Alerts"
+    clean_old: "🗑️ Clean 7 Days"
+    close: "❌ Close Menu"
+    clear_directory: "🗑 Clear Download Directory"
+    adjust_task_frequency: "⚙️ Reduce Task Frequency"
+    view_details: "📊 View Details"
+    ignore_alert: "❌ Ignore"
+    
+  config:
+    validation:
+      threshold_invalid: "DISK_ALERT_THRESHOLD must be a valid integer"
+      threshold_required: "DISK_ALERT_THRESHOLD must be greater than 0"
+      threshold_too_small: "DISK_ALERT_THRESHOLD less than 1GB, may be too sensitive"
+      threshold_too_large: "DISK_ALERT_THRESHOLD greater than 100GB, may miss important alerts"
+      enabled_invalid: "DISK_ALERT_ENABLED must be a boolean or 'true'/'false' string"
+      auto_start_invalid: "DISK_MONITOR_AUTO_START must be a boolean or 'true'/'false' string"
+      
+  table:
+    item: "Item"
+    value: "Value"
+    status: "Status Item"
+    current_status: "Current Status"
+    disk_info: "Disk Space Information:"
+    download_dir_info: "Download Directory Information:"
+    system_status: "System Status:"
+    config_table: "Configuration:"
+    clean_before: "Before"
+    clean_after: "After"
+    change: "Change"
+    file_count_item: "📁 File Count"
+    storage_space_item: "💾 Storage Space"
+    clean_stats: "Cleanup Statistics"
+
+# Network monitoring
+network:
+  monitor:
+    status: "📊 Network Monitor Status"
+    started: "✅ Network monitor started"
+    stopped: "✅ Network monitor stopped"
+    already_running: "⚠️ Network monitor is already running"
+    not_running: "⚠️ Network monitor is not running"
+    service_not_initialized: "⚠️ Network monitor service not initialized"
+    auto_delete_info: "Message will auto-delete in 5 seconds"
+    
+    # Service log messages
+    service_started: "Network monitor service started (check interval: {interval}s)"
+    service_stopped: "Network monitor service stopped"
+    service_error: "Network monitor error: {error}"
+    history_reset: "Network monitor history data reset"
+    get_interfaces_failed: "Failed to get network interfaces: {error}"
+    get_stats_failed: "Failed to get network stats: {error}"
+    get_connections_failed: "Failed to get connection stats: {error}"
+    interface_not_found: "Interface {interface} does not exist"
+    
+    # Command descriptions and arguments
+    main_command_desc: "Network monitoring command"
+    subcommand_help: "Subcommands: status, interfaces, connections, start, stop etc."
+    args_help: "Subcommand arguments"
+    
+  # Quick buttons
+  buttons:
+    status: "📊 Network Status"
+    interfaces: "🌐 Interface Info"
+    connections: "🔗 Connection Stats"
+    start: "▶️ Start Monitor"
+    stop: "⏹️ Stop Monitor"  
+    reset: "🔄 Reset Stats"
+    close: "❌ Close Menu"
+    
+  # Command help
+  commands:
+    help: |
+      <b>🌐 Network Monitoring Commands</b>
+
+      <b>Available subcommands:</b>
+      • <code>/network status</code> - View network status and bandwidth
+      • <code>/network interfaces</code> - View network interface information
+      • <code>/network connections</code> - View connection statistics
+      • <code>/network start</code> - Start network monitoring
+      • <code>/network stop</code> - Stop network monitoring
+      • <code>/network reset</code> - Reset monitoring statistics
+
+      <b>Examples:</b>
+      <code>/network status</code>
+      <code>/network interfaces</code>
+
+      <b>📱 Click buttons below for quick actions:</b>
+      
+  # Status reports
+  status:
+    title: "🌐 Network Status Report"
+    realtime_status: "Real-time Network Status:"
+    bandwidth_stats: "Bandwidth Statistics:"
+    monitor_status: "Monitor Status:"
+    get_info_failed: "❌ Unable to get network interface information"
+    get_connections_failed: "❌ Failed to get connection information: {error}"
+    
+  # Table fields
+  table:
+    status_item: "Status Item"
+    current_value: "Current Value"
+    stats_type: "Stats Type"
+    upload: "Upload"
+    download: "Download"
+    monitor_item: "Monitor Item"
+    status: "Status"
+    interface_name: "Interface Name"
+    sent_data: "Sent Data"
+    received_data: "Received Data"
+    connection_type: "Connection Type"
+    count: "Count"
+    config_item: "Config Item"
+    setting_value: "Setting Value"
+    status_info: "Status Info"
+    current_status: "Current Status"
+    result: "Result"
+    reset_item: "Reset Item"
+    
+  # Status data items
+  data:
+    upload_speed: "📤 Upload Speed"
+    download_speed: "📥 Download Speed"
+    total_bandwidth: "📊 Total Bandwidth"
+    total_sent: "📤 Total Sent"
+    total_received: "📥 Total Received"
+    error: "❌ Error"
+    five_min_avg: "5-min Average"
+    peak_bandwidth: "Peak Bandwidth"
+    monitor_service: "📊 Monitor Service"
+    data_points: "📈 Data Points"
+    service_running: "🟢 Running"
+    service_stopped: "🔴 Stopped"
+    already_running_status: "🟢 Running"
+    operation_result: "⚠️ Operation Result"
+    already_running_text: "Already running"
+    
+  # Connection statistics
+  connections:
+    title: "🔗 Network Connection Statistics"
+    stats_title: "Connection Status Statistics:"
+    total_connections: "🔗 Total Connections"
+    tcp_connections: "📡 TCP Connections"
+    udp_connections: "📶 UDP Connections"
+    listening_ports: "🎯 Listening Ports"
+    established_connections: "✅ Established Connections"
+    time_wait_connections: "⏳ Time Wait Connections"
+    
+  # Interface information
+  interfaces:
+    title: "🌐 Network Interface Information"
+    traffic_stats: "Interface Traffic Statistics:"
+    display_note: "📝 Showing first {count} interfaces"
+    
+  # Monitor control
+  control:
+    start_success: "✅ Network monitor started successfully"
+    config_info: "Monitor Configuration:"
+    check_interval: "⏱ Check Interval"
+    seconds: "{seconds}s"
+    history_records: "📊 History Records"
+    data_points_unit: "{size} points"
+    initial_points: "📈 Data Points"
+    service_status: "🟢 Service Status"
+    started_status: "Started"
+    stop_success: "✅ Network monitor stopped"
+    preserved_data: "📈 Preserved Data"
+    reset_success: "✅ Network statistics reset"
+    cleaned_data: "📈 Cleaned Data"
+    reset_status: "🔄 Reset Status"
+    success_status: "✅ Success"
+    current_data: "📊 Current Data"
+    zero_points: "0 points"
+    
+  # Format utilities
+  format:
+    days: "days"
+    hours: "hours"
+    minutes: "minutes"
+    
+# Menu
+menu:
+  main_title: "🎯 Main Menu"
+  select_option: "Please select an option:"
+  
+# Error messages
+errors:
+  permission_denied: "❌ Permission denied"
+  invalid_command: "❌ Invalid command"
+  operation_failed: "❌ Operation failed: {reason}"
+  file_not_found: "❌ File not found: {file}"
+  connection_error: "❌ Connection error: {error}"
+  
+# Success messages  
+success:
+  operation_complete: "✅ Operation complete"
+  file_downloaded: "✅ File downloaded: {file}"
+  file_uploaded: "✅ File uploaded: {file}"
+  settings_saved: "✅ Settings saved"
+
+# Leech commands
+leech:
+  prompt:
+    destination_selection: "Set target ID based on user selection"
+    token_acquisition: "Get token"
+    channel_button: "Add default channel button"
+    private_chat_button: "Add private chat button"
+  
+  common:
+    processing: "Processing..."
+    select_destination: "Select destination"
+    current_setting: "Current setting: {setting}"
+    
+  upload:
+    tool_not_selected: "Upload tool not selected"
+    destination_not_set: "Destination path not set"
+    alist_storage_required: "AList storage path selection required"
+    rclone_storage_required: "Rclone storage path selection required"
+    telegram_destination_required: "Telegram destination selection required"
+    
+  buttons:
+    default_channel: "Default Channel"
+    private_chat: "Private Chat"
+    select_storage: "Select Storage"
+    confirm_setting: "Confirm Setting"
