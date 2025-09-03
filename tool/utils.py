@@ -8,8 +8,7 @@ from shutil import rmtree
 from pyrogram import filters
 from pyrogram.types import Message, CallbackQuery
 
-from config.config import TELEGRAM_ADMIN_ID, ALIST_WEB, ALIST_TOKEN, ALIST_HOST
-from module.leech.beans.leech_file import LeechFile
+from config.config import TELEGRAM_ADMIN_ID
 from constants.worker import Project
 from tool.user_agents import get_random_user_agent
 
@@ -21,7 +20,7 @@ async def __is_admin(_, __, update: Union[Message, CallbackQuery]) -> bool:
 is_admin = filters.create(__is_admin)
 
 
-def get_redis_unique_key(leech_file: LeechFile) -> str:
+def get_redis_unique_key(leech_file) -> str:
     return hashlib.md5(urllib.parse.quote(
         f'{leech_file.tool}_{getattr(leech_file, "remote_folder", "")}_{leech_file.name}'
     ).encode()).hexdigest()
@@ -36,8 +35,6 @@ def get_request_header(link: str):
     }
 
 
-def is_alist_available():
-    return all([ALIST_WEB, ALIST_TOKEN]) or all([ALIST_HOST, ALIST_TOKEN])
 
 
 def open_celery_worker_process(project: Project, hostname: str, queues: str, concurrency: int):
@@ -70,7 +67,7 @@ def convert_bytes(byte_amount: int) -> str:
         return f"{byte_amount:.2f} B"
 
 
-def clean_local_file(leech_file: LeechFile):
+def clean_local_file(leech_file):
     full_name = leech_file.get_full_name()
 
     if os.path.isfile(full_name) or os.path.islink(full_name):
