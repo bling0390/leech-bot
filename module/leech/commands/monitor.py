@@ -13,6 +13,7 @@ from config.config import FAILED_TASK_EXPIRE_AFTER_DAYS
 from module.leech.utils.message import send_message_to_admin
 from module.leech.constants.task import TaskStatus, TaskType
 from module.leech.constants.leech_file_status import LeechFileStatus
+from module.i18n import get_i18n_manager
 
 
 def get_task_count(task_status: TaskStatus, task_type: TaskType) -> int:
@@ -25,6 +26,8 @@ def get_task_count(task_status: TaskStatus, task_type: TaskType) -> int:
 
 @Client.on_message(filters.command('leech monitor') & filters.private & is_admin)
 async def leech_monitor(_: Client, message: Message):
+    user_id = message.from_user.id
+    i18n = get_i18n_manager()
     m: Message = await send_message_to_admin('Got it, please wait...', False)
     title = f'Statistic within {FAILED_TASK_EXPIRE_AFTER_DAYS} days'
     table = pt.PrettyTable(['Item', 'Current'])
