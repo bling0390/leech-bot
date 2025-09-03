@@ -415,3 +415,83 @@ leech:
     private_chat: "Private Chat"
     select_storage: "Select Storage"
     confirm_setting: "Confirm Setting"
+    
+  # Leech Monitor
+  monitor:
+    title: "📊 Statistics within {days} days"
+    waiting: "Got it, please wait..."
+    download_queue: "Tasks in download queue"
+    upload_queue: "Tasks in upload queue"
+    failed_tasks: "Number of failed tasks"
+    successful_tasks: "Number of successful tasks"
+    download_workers: "Number of download workers"
+    upload_workers: "Number of upload workers"
+    concurrency: "Concurrency of {tool}"
+    
+  # Leech Settings
+  setting:
+    no_sync_tool: "❌ <b>No sync tool available</b>"
+    select_upload_tool: "Current upload tool: {tool}"
+    select_alist_storage: "Current {tool} storage: {dest}"
+    select_rclone_storage: "Current {tool} storage: {dest}"
+    settings_updated: "🎉 Setting has been updated!"
+    upload_tool: "Upload tool"
+    upload_destination: "Upload destination"
+    waiting: "Got it, please wait..."
+    none: "None"
+    
+  # Leech Retry
+  retry:
+    task_retried_single: "✅ <b>Task has retried!</b>"
+    task_not_exist: "❌ <b>Task not exist or expired</b>"
+    tasks_retried: "✅ <b>{count} tasks has retried!</b>"
+    explanation: "<b>Tasks will download/upload again if they are failed within {days} days,</b>"
+    processing_warning: "<b>but it will take a while to handle for you if there are too many of them,</b>"
+    choose_option: "<b>now choose an option below and go on.</b>"
+    only_download: "Only download tasks"
+    only_upload: "Only upload tasks"
+    both: "Both"
+    
+  # Leech Terminate
+  terminate:
+    all_pending_terminated: "<b>All pending tasks has terminated!</b>"
+    specific_terminated: "<b>All pending {type} tasks has terminated!</b>"
+    choose_task_type: "<b>Choose task type you wanna terminate.</b>"
+    only_download: "Only download tasks"
+    only_upload: "Only upload tasks"
+    both: "Both"
+    
+  # Leech Worker
+  worker:
+    selection_title: "<b>Worker</b>"
+    selection_description: "Bot will startup a new worker process for you if it does not exist."
+    resource_warning: "Be aware of the more worker you startup the more computer resource it will consume."
+    for_download: "For download"
+    for_upload: "For upload"
+    running_workers: "({count} running worker)"
+    
+    amount_title: "<b>Amount</b>"
+    amount_description: "Amount of task will be processed at the same time."
+    change_to_shutdown: "Change to 0 (shutdown worker)"
+    change_to: "Change to {amount}"
+    
+    queue_title: "<b>Queue</b>"
+    queue_for: "For {tool}"
+    queue_running: "(Running)"
+    
+    waiting: "Got it, please wait..."
+    start_failed: "Failed to start worker, please try again later."
+    congratulations: "🎉 Congratulations! Worker started!"
+    worker_shutdown: "🎉 Worker has been shutdown!"
+    concurrency_updated: "🎉 Update number of concurrency to {amount}."
+    worker_not_ready: "Worker is not ready, please try again later."
+    update_failed: "Fail to update worker concurrency, please try again later."
+    
+    # Table fields
+    table:
+      item: "Item"
+      current: "Current"
+      worker_name: "Worker name"
+      queue_name: "Queue name"
+      concurrency: "Concurrency"
+      worker_status: "Worker status"

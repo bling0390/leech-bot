@@ -7,6 +7,7 @@ from module.leech.utils.button import get_bottom_buttons
 from module.leech.constants.task import TaskType, TaskStatus
 from module.leech.utils.message import send_message_to_admin
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
+from module.i18n import get_i18n_manager
 
 COMMAND_PREFIX = 'leech_terminate_'
 control_instance = Control(app=celery_client)
@@ -17,14 +18,16 @@ async def interact_callback(_, query):
     task_type = query.data.removeprefix(COMMAND_PREFIX)
 
     await query.message.delete()
+    user_id = query.from_user.id
+    i18n = get_i18n_manager()
 
     if task_type == 'both':
         terminate_specific_tasks(TaskType.DOWNLOAD)
         terminate_specific_tasks(TaskType.UPLOAD)
-        message = '<b>All pending tasks has terminated!</b>'
+        message = await i18n.translate_for_user(user_id, 'leech.terminate.all_pending_terminated')
     else:
         terminate_specific_tasks(task_type)
-        message = f'<b>All pending {task_type.lower()} tasks has terminated!</b>'
+        message = await i18n.translate_for_user(user_id, 'leech.terminate.specific_terminated', type=task_type.lower())
 
     await send_message_to_admin(message)
 
@@ -52,26 +55,26 @@ def terminate_specific_tasks(task_type: TaskType, task_status: TaskStatus = Task
 
 @Client.on_message(filters.command('leech terminate') & filters.private & is_admin)
 async def leech_terminate(_: Client, message: Message):
+    user_id = message.from_user.id
+    i18n = get_i18n_manager()
     await message.reply(
-        text='\n\n'.join([
-            '<b>Choose task type you wanna terminate.</b>'
-        ]),
+        text=await i18n.translate_for_user(user_id, 'leech.terminate.choose_task_type'),
         reply_markup=InlineKeyboardMarkup([
             [
                 InlineKeyboardButton(
-                    text='Only download tasks',
+                    text=await i18n.translate_for_user(user_id, 'leech.terminate.only_download'),
                     callback_data=f'{COMMAND_PREFIX}{TaskType.DOWNLOAD}',
                 )
             ],
             [
                 InlineKeyboardButton(
-                    text='Only upload tasks',
+                    text=await i18n.translate_for_user(user_id, 'leech.terminate.only_upload'),
                     callback_data=f'{COMMAND_PREFIX}{TaskType.UPLOAD}',
                 )
             ],
             [
                 InlineKeyboardButton(
-                    text='Both',
+                    text=await i18n.translate_for_user(user_id, 'leech.terminate.both'),
                     callback_data=f'{COMMAND_PREFIX}both',
                 )
             ],

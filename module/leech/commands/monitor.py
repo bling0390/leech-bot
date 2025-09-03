@@ -88,7 +88,7 @@ async def leech_monitor(_: Client, message: Message):
     for queue, concurrency in download_queue_concurrency.items():
         table.add_row(
             [
-                f'Concurrency of {queue.split("@")[1].lower()}',
+                await i18n.translate_for_user(user_id, 'leech.monitor.concurrency', tool=queue.split("@")[1].lower()),
                 concurrency
             ],
             divider=True
@@ -97,7 +97,7 @@ async def leech_monitor(_: Client, message: Message):
     for queue, concurrency in upload_queue_concurrency.items():
         table.add_row(
             [
-                f'Concurrency of {queue.split("@")[1].lower()}',
+                await i18n.translate_for_user(user_id, 'leech.monitor.concurrency', tool=queue.split("@")[1].lower()),
                 concurrency
             ],
             divider=True
