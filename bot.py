@@ -9,7 +9,7 @@ from loguru import logger
 from pyrogram import Client, idle
 from pyrogram.enums import ParseMode
 from rclone_python import rclone
-from tool.config_utils import is_alist_available
+from tool.utils import is_alist_available
 from rclone_python.remote_types import RemoteTypes
 from tool.telegram_client import update_telegram_client
 from tool.mongo_client import EstablishConnection as EstablishMongodbConnection
