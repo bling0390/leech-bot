@@ -6,7 +6,7 @@ from rclone_python import rclone
 from api.alist_api import AListAPI
 from config.config import RCLONE_REMOTES, TELEGRAM_CHANNEL_ID
 from module.leech.constants.leech_file_tool import LeechFileSyncTool
-from tool.utils import is_alist_available
+from tool.config_utils import is_alist_available
 
 
 def get_bottom_buttons(
