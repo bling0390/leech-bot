@@ -11,7 +11,6 @@ from module.leech.utils.message import send_message_to_admin
 from module.leech.adaptors.downloader import process_download
 from module.leech.constants.leech_file_status import LeechFileStatus
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
-from module.i18n import get_i18n_manager
 
 COMMAND_PREFIX = 'leech_retry_'
 COMMAND_PREFIX_SINGLE = f'{COMMAND_PREFIX}single_'
@@ -42,8 +41,6 @@ def retry_specific_tasks(
 @Client.on_callback_query(filters.regex(f'^{COMMAND_PREFIX_SINGLE}'))
 async def retry_single_task(_, query):
     await query.message.delete()
-    user_id = query.from_user.id
-    i18n = get_i18n_manager()
 
     leech_file: LeechFile | None = LeechFile.objects(id=query.data.removeprefix(COMMAND_PREFIX_SINGLE)).first()
 
@@ -57,11 +54,9 @@ async def retry_single_task(_, query):
 
         create_pending_task(leech_file)
 
-        msg = await i18n.translate_for_user(user_id, 'leech.retry.task_retried_single')
-        await send_message_to_admin(msg)
+        await send_message_to_admin('✅ <b>Task has retried!</b>')
     else:
-        msg = await i18n.translate_for_user(user_id, 'leech.retry.task_not_exist')
-        await send_message_to_admin(msg)
+        await send_message_to_admin('❌ <b>Task not exist or expired</b>')
 
 
 @Client.on_callback_query(filters.regex(f'^{COMMAND_PREFIX}'))
@@ -69,16 +64,14 @@ async def interact_callback(_, query):
     status = query.data.removeprefix(COMMAND_PREFIX)
 
     await query.message.delete()
-    user_id = query.from_user.id
-    i18n = get_i18n_manager()
 
     if status == 'both':
         download_count = retry_specific_tasks(LeechFileStatus.DOWNLOAD_FAIL)
         upload_count = retry_specific_tasks(LeechFileStatus.UPLOAD_FAIL)
-        message = await i18n.translate_for_user(user_id, 'leech.retry.tasks_retried', count=download_count + upload_count)
+        message = f'✅ <b>{download_count + upload_count} tasks has retried!</b>'
     else:
         count = retry_specific_tasks(status)
-        message = await i18n.translate_for_user(user_id, 'leech.retry.tasks_retried', count=count)
+        message = f'✅ <b>{count} tasks has retried!</b>'
 
     await send_message_to_admin(message)
 
@@ -95,30 +88,28 @@ def create_pending_task(leech_file: LeechFile):
 
 @Client.on_message(filters.command('leech retry') & filters.private & is_admin)
 async def leech_retry(_: Client, message: Message):
-    user_id = message.from_user.id
-    i18n = get_i18n_manager()
     await message.reply(
         text='\n\n'.join([
-            await i18n.translate_for_user(user_id, 'leech.retry.explanation', days=FAILED_TASK_EXPIRE_AFTER_DAYS),
-            await i18n.translate_for_user(user_id, 'leech.retry.processing_warning'),
-            await i18n.translate_for_user(user_id, 'leech.retry.choose_option'),
+            f'<b>Tasks will download/upload again if they are failed within {FAILED_TASK_EXPIRE_AFTER_DAYS} days,</b>',
+            '<b>but it will take a while to handle for you if there are too many of them,</b>',
+            '<b>now choose an option below and go on.</b>',
         ]),
         reply_markup=InlineKeyboardMarkup([
             [
                 InlineKeyboardButton(
-                    text=await i18n.translate_for_user(user_id, 'leech.retry.only_download'),
+                    text='Only download tasks',
                     callback_data=f'{COMMAND_PREFIX}{LeechFileStatus.DOWNLOAD_FAIL}',
                 )
             ],
             [
                 InlineKeyboardButton(
-                    text=await i18n.translate_for_user(user_id, 'leech.retry.only_upload'),
+                    text='Only upload tasks',
                     callback_data=f'{COMMAND_PREFIX}{LeechFileStatus.UPLOAD_FAIL}',
                 )
             ],
             [
                 InlineKeyboardButton(
-                    text=await i18n.translate_for_user(user_id, 'leech.retry.both'),
+                    text='Both',
                     callback_data=f'{COMMAND_PREFIX}both',
                 )
             ],

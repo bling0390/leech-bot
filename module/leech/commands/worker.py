@@ -10,7 +10,6 @@ from constants.worker import Project, Queue, WorkerStatus
 from tool.utils import is_admin, open_celery_worker_process
 from module.leech.utils.message import send_message_to_admin
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
-from module.i18n import get_i18n_manager
 from module.leech.constants.leech_file_tool import LeechFileTool, LeechFileSyncTool
 
 
@@ -39,29 +38,21 @@ consume_react_value = {}
 control = Control(app=celery_client)
 
 
-async def get_queue_buttons(
+def get_queue_buttons(
     queue_name: str,
     tools: list[str],
     worker_name: str,
-    worker_names: list[str],
-    user_id: int
+    worker_names: list[str]
 ) -> list[list[InlineKeyboardButton]]:
-    i18n = get_i18n_manager()
-    buttons = []
-    for x in tools:
-        queue_for_text = await i18n.translate_for_user(user_id, "leech.worker.queue_for", tool=x.lower())
-        running_text = await i18n.translate_for_user(user_id, "leech.worker.queue_running") if f"{worker_name}@{queue_name}@{x}" in worker_names else ""
-        button_text = f'{queue_for_text} {running_text}'
-        
-        buttons.append([
+    return [
+        *list(map(lambda x: [
             InlineKeyboardButton(
-                text=button_text,
+                text=f'For {x.lower()} {"(Running)" if f"{worker_name}@{queue_name}@{x}" in worker_names else ""}',
                 callback_data=f'{ButtonCallbackPrefix.LEECH_CONSUME_QUEUE}{queue_name}@{x}',
             )
-        ])
-    
-    buttons.append(get_bottom_buttons('', should_have_return=False))
-    return buttons
+        ], tools)),
+        get_bottom_buttons('', should_have_return=False)
+    ]
 
 
 def wait_expect_worker_status(hostname: str, status: WorkerStatus, timeout: float) -> bool:
@@ -74,40 +65,31 @@ def wait_expect_worker_status(hostname: str, status: WorkerStatus, timeout: floa
     return False
 
 
-async def construct_table_format_message(user_id: int, **kwargs) -> str:
-    i18n = get_i18n_manager()
-    item_col = await i18n.translate_for_user(user_id, 'leech.worker.table.item')
-    current_col = await i18n.translate_for_user(user_id, 'leech.worker.table.current')
-    table = pt.PrettyTable([item_col, current_col])
+def construct_table_format_message(**kwargs) -> str:
+    table = pt.PrettyTable(['Item', 'Current'])
     table.border = True
     table.preserve_internal_border = False
     table.header = False
-    table._max_width = {item_col: 18, current_col: 18}
-    table.valign[item_col] = 'm'
-    table.valign[current_col] = 'm'
+    table._max_width = {'Item': 18, 'Current': 18}
+    table.valign['Item'] = 'm'
+    table.valign['Current'] = 'm'
 
     if kwargs.get('worker'):
-        worker_name_label = await i18n.translate_for_user(user_id, 'leech.worker.table.worker_name')
-        table.add_row([worker_name_label, kwargs.get('worker')], divider=True)
+        table.add_row(['Worker name', kwargs.get('worker')], divider=True)
 
     if kwargs.get('queue'):
-        queue_name_label = await i18n.translate_for_user(user_id, 'leech.worker.table.queue_name')
-        table.add_row([queue_name_label, kwargs.get('queue')], divider=True)
+        table.add_row(['Queue name', kwargs.get('queue')], divider=True)
 
     if kwargs.get('amount'):
-        concurrency_label = await i18n.translate_for_user(user_id, 'leech.worker.table.concurrency')
-        table.add_row([concurrency_label, kwargs.get('amount')], divider=True)
+        table.add_row(['Concurrency', kwargs.get('amount')], divider=True)
 
     if kwargs.get('status'):
-        worker_status_label = await i18n.translate_for_user(user_id, 'leech.worker.table.worker_status')
-        table.add_row([worker_status_label, kwargs.get('status')], divider=True)
+        table.add_row(['Worker status', kwargs.get('status')], divider=True)
 
     return f'<pre>| \n| {kwargs.get("title")}\n| \n{table.get_string()}</pre>'
 
 
 async def _next(message: Message, next_step: str):
-    user_id = message.from_user.id
-    i18n = get_i18n_manager()
     global current_consume_step, consume_react_value
     worker = consume_react_value.get('worker', '')
     amount = int(consume_react_value.get('amount', '1'))
@@ -127,16 +109,16 @@ async def _next(message: Message, next_step: str):
 
         return await message.reply(
             text='\n\n'.join([
-                await i18n.translate_for_user(user_id, 'leech.worker.selection_title'),
-                await i18n.translate_for_user(user_id, 'leech.worker.selection_description'),
-                await i18n.translate_for_user(user_id, 'leech.worker.resource_warning')
+                '<b>Worker</b>',
+                'Bot will startup a new worker process for you if it does not exist.',
+                'Be aware of the more worker you startup the more computer resource it will consume.'
             ]),
             reply_markup=InlineKeyboardMarkup([
                 [
                     InlineKeyboardButton(
                         text=' '.join([
-                            await i18n.translate_for_user(user_id, 'leech.worker.for_download'),
-                            await i18n.translate_for_user(user_id, 'leech.worker.running_workers', count=download_worker_count) if download_worker_count > 0 else ''
+                            'For download',
+                            f'({download_worker_count} running worker)' if download_worker_count > 0 else ''
                         ]),
                         callback_data=f'{ButtonCallbackPrefix.LEECH_CONSUME_WORKER}{Hostname.FILE_LEECH_WORKER}',
                     )
@@ -144,8 +126,8 @@ async def _next(message: Message, next_step: str):
                 [
                     InlineKeyboardButton(
                         text=' '.join([
-                            await i18n.translate_for_user(user_id, 'leech.worker.for_upload'),
-                            await i18n.translate_for_user(user_id, 'leech.worker.running_workers', count=upload_worker_count) if upload_worker_count > 0 else ''
+                            'For upload',
+                            f'({upload_worker_count} running worker)' if upload_worker_count > 0 else ''
                         ]),
                         callback_data=f'{ButtonCallbackPrefix.LEECH_CONSUME_WORKER}{Hostname.FILE_SYNC_WORKER}',
                     )
@@ -155,46 +137,37 @@ async def _next(message: Message, next_step: str):
         )
 
     elif next_step == ConsumeInteractStep.SELECT_AMOUNT:
-        amount_buttons = []
-        
-        # Add shutdown button if worker exists
-        if Worker.objects(hostname=hostname, status=WorkerStatus.READY).first():
-            shutdown_text = await i18n.translate_for_user(user_id, 'leech.worker.change_to_shutdown')
-            amount_buttons.append([
-                InlineKeyboardButton(
-                    text=shutdown_text,
-                    callback_data=f'{ButtonCallbackPrefix.LEECH_CONSUME_AMOUNT}{0}',
-                )
-            ])
-        
-        # Add amount buttons 1-5
-        for x in range(1, 6):
-            change_text = await i18n.translate_for_user(user_id, 'leech.worker.change_to', amount=x)
-            amount_buttons.append([
-                InlineKeyboardButton(
-                    text=change_text,
-                    callback_data=f'{ButtonCallbackPrefix.LEECH_CONSUME_AMOUNT}{x}',
-                )
-            ])
-        
-        # Add bottom buttons
-        amount_buttons.append(get_bottom_buttons('', should_have_return=False))
-        
         return await message.reply(
             text='\n\n'.join([
-                await i18n.translate_for_user(user_id, 'leech.worker.amount_title'),
-                await i18n.translate_for_user(user_id, 'leech.worker.amount_description')
+                '<b>Amount</b>',
+                'Amount of task will be processed at the same time.'
             ]),
-            reply_markup=InlineKeyboardMarkup(amount_buttons)
+            reply_markup=InlineKeyboardMarkup(list(filter(lambda x: x is not None, [
+                [
+                    InlineKeyboardButton(
+                        text=f'Change to 0 (shutdown worker)',
+                        callback_data=f'{ButtonCallbackPrefix.LEECH_CONSUME_AMOUNT}{0}',
+                    )
+                ] if Worker.objects(hostname=hostname, status=WorkerStatus.READY).first() else None,
+                *list(map(lambda x: [
+                    InlineKeyboardButton(
+                        text=f'Change to {x}',
+                        callback_data=f'{ButtonCallbackPrefix.LEECH_CONSUME_AMOUNT}{x}',
+                    )
+                ], range(1, 6))),
+                get_bottom_buttons('', should_have_return=False)
+            ])))
         )
 
     elif next_step == ConsumeInteractStep.SELECT_QUEUE:
         is_leech_worker_selected = consume_react_value.get('worker') == Hostname.FILE_LEECH_WORKER
 
         return await message.reply(
-            text=await i18n.translate_for_user(user_id, 'leech.worker.queue_title'),
+            text='\n\n'.join([
+                '<b>Queue</b>'
+            ]),
             reply_markup=InlineKeyboardMarkup(
-                await get_queue_buttons(
+                get_queue_buttons(
                     Queue.FILE_DOWNLOAD_QUEUE if is_leech_worker_selected else Queue.FILE_SYNC_QUEUE,
                     list(
                         map(
@@ -208,15 +181,13 @@ async def _next(message: Message, next_step: str):
                         )
                     ),
                     consume_react_value.get('worker'),
-                    list(map(lambda x: x.hostname, Worker.objects(status=WorkerStatus.READY).only('hostname'))),
-                    user_id
+                    list(map(lambda x: x.hostname, Worker.objects(status=WorkerStatus.READY).only('hostname')))
                 )
             )
         )
 
     elif next_step == 'COMPLETED':
-        waiting_msg = await i18n.translate_for_user(user_id, 'leech.worker.waiting')
-        m: Message = await send_message_to_admin(waiting_msg, False)
+        m: Message = await send_message_to_admin('Got it, please wait...', False)
 
         async def wait_until_worker_ready() -> bool:
             open_celery_worker_process(
@@ -228,8 +199,7 @@ async def _next(message: Message, next_step: str):
 
             if not wait_expect_worker_status(hostname, WorkerStatus.READY, time.time() + 60):
                 await m.delete()
-                failed_msg = await i18n.translate_for_user(user_id, 'leech.worker.start_failed')
-                await send_message_to_admin(content=failed_msg)
+                await send_message_to_admin(content='Failed to start worker, please try again later.')
                 return False
 
             return True
@@ -242,9 +212,8 @@ async def _next(message: Message, next_step: str):
 
             await m.delete()
             await send_message_to_admin(
-                content=await construct_table_format_message(
-                    user_id,
-                    title=await i18n.translate_for_user(user_id, 'leech.worker.congratulations'),
+                content=construct_table_format_message(
+                    title=f'🎉 Congratulations! Worker started!',
                     worker=hostname,
                     queue=queue,
                     amount=amount,
@@ -258,7 +227,7 @@ async def _next(message: Message, next_step: str):
         elif matched_worker.status != WorkerStatus.READY:
             await m.delete()
             await send_message_to_admin(
-                content=await i18n.translate_for_user(user_id, 'leech.worker.worker_not_ready'),
+                content='Worker is not ready, please try again later.',
                 should_auto_delete=False
             )
             return
@@ -270,9 +239,8 @@ async def _next(message: Message, next_step: str):
         await m.delete()
         if amount == 0 and has_shutdown:
             await send_message_to_admin(
-                content=await construct_table_format_message(
-                    user_id,
-                    title=await i18n.translate_for_user(user_id, 'leech.worker.worker_shutdown'),
+                content=construct_table_format_message(
+                    title='🎉 Worker has been shutdown!',
                     worker=hostname,
                     status=WorkerStatus.SHUTDOWN
                 ),
@@ -283,17 +251,15 @@ async def _next(message: Message, next_step: str):
                 return
 
             await send_message_to_admin(
-                content=await construct_table_format_message(
-                    user_id,
-                    title=await i18n.translate_for_user(user_id, 'leech.worker.concurrency_updated', amount=amount),
+                content=construct_table_format_message(
+                    title=f'🎉 Update number of concurrency to {amount}.',
                     worker=hostname,
                     amount=amount
                 ),
                 should_auto_delete=False
             )
         else:
-            failed_update_msg = await i18n.translate_for_user(user_id, 'leech.worker.update_failed')
-            await send_message_to_admin(content=failed_update_msg)
+            await send_message_to_admin(content='Fail to update worker concurrency, please try again later.')
 
 
 @Client.on_callback_query(filters.regex('^leech_worker_'))
