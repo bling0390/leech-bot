@@ -1,19 +1,12 @@
 import httpx
 from loguru import logger
 from pyrogram.types import InlineKeyboardButton
-
-# 可选导入 rclone_python
-try:
-    from rclone_python import rclone
-    RCLONE_AVAILABLE = True
-except ImportError:
-    rclone = None
-    RCLONE_AVAILABLE = False
+from rclone_python import rclone
 
 from api.alist_api import AListAPI
 from config.config import RCLONE_REMOTES, TELEGRAM_CHANNEL_ID
 from module.leech.constants.leech_file_tool import LeechFileSyncTool
-from config.availability import is_alist_available
+from tool.utils import is_alist_available
 
 
 def get_bottom_buttons(
@@ -45,7 +38,7 @@ def get_upload_tool_buttons(callback_prefix: str) -> list[list[InlineKeyboardBut
                 text=str(LeechFileSyncTool.RCLONE),
                 callback_data=f'{callback_prefix}{LeechFileSyncTool.RCLONE}',
             )
-        ] if RCLONE_AVAILABLE and rclone.is_installed() else None,
+        ] if rclone.is_installed() else None,
         [
             InlineKeyboardButton(
                 text=str(LeechFileSyncTool.TELEGRAM),
@@ -99,7 +92,7 @@ def get_telegram_destination_buttons(callback_prefix: str) -> list[list[InlineKe
     # 添加私聊按钮
     buttons.append([
         InlineKeyboardButton(
-            text="Private Chat",  # TODO: Add i18n support
+            text=I18nManager().translate('leech.buttons.private_chat'),
             callback_data=f'{callback_prefix}private',
         )
     ])

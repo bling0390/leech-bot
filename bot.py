@@ -8,17 +8,9 @@ import asyncio
 from loguru import logger
 from pyrogram import Client, idle
 from pyrogram.enums import ParseMode
-# 可选导入 rclone_python
-try:
-    from rclone_python import rclone
-    from rclone_python.remote_types import RemoteTypes
-    RCLONE_AVAILABLE = True
-except ImportError:
-    rclone = None
-    RemoteTypes = None
-    RCLONE_AVAILABLE = False
-
-from config.availability import is_alist_available
+from rclone_python import rclone
+from tool.utils import is_alist_available
+from rclone_python.remote_types import RemoteTypes
 from tool.telegram_client import update_telegram_client
 from tool.mongo_client import EstablishConnection as EstablishMongodbConnection
 from module.disk.auto_start import start_disk_monitor_if_enabled
