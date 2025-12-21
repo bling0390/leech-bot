@@ -1,0 +1,61 @@
+# OS / Editor
+.DS_Store
+Thumbs.db
+
+.idea/
+.vscode/
+*.iml
+
+*~
+*.swp
+*.swo
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+.venv/
+venv/
+ENV/
+env/
+
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.pytype/
+.tox/
+.nox/
+
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+
+*.log
+logs/
+
+# Packaging / build
+build/
+dist/
+*.egg-info/
+.eggs/
+pip-wheel-metadata/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Docker / environment
+.env
+.env.*
+!.env.example
+!.env.sample
+docker-compose.override.yml
+
+# Local config overrides
+config.local.yaml
+config.local.yml
+
+# Local databases
+*.sqlite3
+*.db
