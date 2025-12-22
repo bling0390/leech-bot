@@ -1,3 +1,4 @@
+import asyncio
 import os
 import re
 import i18n
@@ -5,7 +6,6 @@ import time
 import datetime
 import platform
 from loguru import logger
-from pyrogram import Client
 from rclone_python import rclone
 from tool.utils import is_alist_available
 from rclone_python.remote_types import RemoteTypes
@@ -28,6 +28,13 @@ from config.config import (
     MEGA_AUTHORIZATION_PASSWORD,
     NODE_ENV
 )
+
+try:
+    asyncio.get_event_loop()
+except RuntimeError:
+    asyncio.set_event_loop(asyncio.new_event_loop())
+
+from pyrogram import Client
 
 
 def setup_locale():
