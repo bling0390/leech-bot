@@ -8,17 +8,87 @@ from shutil import rmtree
 from pyrogram import filters
 from pyrogram.types import Message, CallbackQuery
 
-from config.config import TELEGRAM_ADMIN_ID, ALIST_WEB, ALIST_TOKEN, ALIST_HOST
+from config.config import TELEGRAM_ADMIN_ID, TELEGRAM_MEMBER, ALIST_WEB, ALIST_TOKEN, ALIST_HOST
 from module.leech.beans.leech_file import LeechFile
 from constants.worker import Project
 from tool.user_agents import get_random_user_agent
 
 
+def _parse_member_ids(raw_value) -> set[int]:
+    if raw_value in (None, '', [], (), set()):
+        return set()
+
+    values = []
+
+    if isinstance(raw_value, str):
+        stripped = raw_value.strip()
+        if stripped.startswith('[') and stripped.endswith(']'):
+            stripped = stripped[1:-1]
+        values = [item.strip().strip("'").strip('"') for item in stripped.split(',') if item.strip()]
+    elif isinstance(raw_value, (list, tuple, set)):
+        values = list(raw_value)
+    else:
+        values = [raw_value]
+
+    member_ids: set[int] = set()
+
+    for value in values:
+        try:
+            member_ids.add(int(value))
+        except (TypeError, ValueError):
+            continue
+
+    return member_ids
+
+
+RESTRICTED_MEMBER_IDS = _parse_member_ids(TELEGRAM_MEMBER)
+AUTHORIZED_MEMBER_IDS = set(RESTRICTED_MEMBER_IDS)
+AUTHORIZED_MEMBER_IDS.add(TELEGRAM_ADMIN_ID)
+IS_AUTHORIZATION_RESTRICTED = len(RESTRICTED_MEMBER_IDS) > 0
+
+
 async def __is_admin(_, __, update: Union[Message, CallbackQuery]) -> bool:
-    return update.from_user.id == TELEGRAM_ADMIN_ID
+    return getattr(update.from_user, 'id', None) == TELEGRAM_ADMIN_ID
 
 
 is_admin = filters.create(__is_admin)
+
+
+def _extract_authorized_ids(update: Union[Message, CallbackQuery]) -> tuple[int | None, int | None]:
+    user_id = getattr(update.from_user, 'id', None)
+
+    chat_id = None
+
+    if isinstance(update, Message):
+        chat_id = getattr(update.chat, 'id', None)
+        if chat_id is None and update.sender_chat is not None:
+            chat_id = getattr(update.sender_chat, 'id', None)
+    elif isinstance(update, CallbackQuery):
+        message = getattr(update, 'message', None)
+        if message is not None:
+            chat_id = getattr(message.chat, 'id', None)
+        if chat_id is None and message is not None and message.sender_chat is not None:
+            chat_id = getattr(message.sender_chat, 'id', None)
+
+    return user_id, chat_id
+
+
+async def __is_authorized(_, __, update: Union[Message, CallbackQuery]) -> bool:
+    if not IS_AUTHORIZATION_RESTRICTED:
+        return True
+
+    user_id, chat_id = _extract_authorized_ids(update)
+
+    if user_id is not None and user_id in AUTHORIZED_MEMBER_IDS:
+        return True
+
+    if chat_id is not None and chat_id in AUTHORIZED_MEMBER_IDS:
+        return True
+
+    return False
+
+
+is_authorized_user = filters.create(__is_authorized)
 
 
 def get_redis_unique_key(leech_file: LeechFile) -> str:

@@ -7,7 +7,7 @@ from celery.app.control import Control
 from tool.celery_client import celery_client
 from module.leech.utils.button import get_bottom_buttons
 from constants.worker import Project, Queue, WorkerStatus
-from tool.utils import is_admin, open_celery_worker_process
+from tool.utils import is_authorized_user, open_celery_worker_process
 from module.leech.utils.message import send_message_to_admin
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 from module.leech.constants.leech_file_tool import LeechFileTool, LeechFileSyncTool
@@ -95,6 +95,7 @@ async def _next(message: Message, next_step: str):
     amount = int(consume_react_value.get('amount', '1'))
     queue = consume_react_value.get('queue', '')
     hostname = f'{worker}@{queue}'
+    chat_id = message.chat.id
 
     if next_step == ConsumeInteractStep.SELECT_WORKER:
         download_worker_count = Worker.objects(
@@ -187,7 +188,7 @@ async def _next(message: Message, next_step: str):
         )
 
     elif next_step == 'COMPLETED':
-        m: Message = await send_message_to_admin('Got it, please wait...', False)
+        m: Message = await send_message_to_admin('Got it, please wait...', False, chat_id=chat_id)
 
         async def wait_until_worker_ready() -> bool:
             open_celery_worker_process(
@@ -199,7 +200,7 @@ async def _next(message: Message, next_step: str):
 
             if not wait_expect_worker_status(hostname, WorkerStatus.READY, time.time() + 60):
                 await m.delete()
-                await send_message_to_admin(content='Failed to start worker, please try again later.')
+                await send_message_to_admin(content='Failed to start worker, please try again later.', chat_id=chat_id)
                 return False
 
             return True
@@ -219,7 +220,8 @@ async def _next(message: Message, next_step: str):
                     amount=amount,
                     status=WorkerStatus.READY
                 ),
-                should_auto_delete=False
+                should_auto_delete=False,
+                chat_id=chat_id
             )
 
             return
@@ -228,7 +230,8 @@ async def _next(message: Message, next_step: str):
             await m.delete()
             await send_message_to_admin(
                 content='Worker is not ready, please try again later.',
-                should_auto_delete=False
+                should_auto_delete=False,
+                chat_id=chat_id
             )
             return
 
@@ -244,7 +247,8 @@ async def _next(message: Message, next_step: str):
                     worker=hostname,
                     status=WorkerStatus.SHUTDOWN
                 ),
-                should_auto_delete=False
+                should_auto_delete=False,
+                chat_id=chat_id
             )
         elif amount != 0 and has_shutdown:
             if not (await wait_until_worker_ready()):
@@ -256,10 +260,11 @@ async def _next(message: Message, next_step: str):
                     worker=hostname,
                     amount=amount
                 ),
-                should_auto_delete=False
+                should_auto_delete=False,
+                chat_id=chat_id
             )
         else:
-            await send_message_to_admin(content='Fail to update worker concurrency, please try again later.')
+            await send_message_to_admin(content='Fail to update worker concurrency, please try again later.', chat_id=chat_id)
 
 
 @Client.on_callback_query(filters.regex('^leech_worker_'))
@@ -275,7 +280,7 @@ async def consume_callback(_, query):
     current_consume_step = next_consume_step
 
 
-@Client.on_message(filters.command('leech worker') & filters.private & is_admin)
+@Client.on_message(filters.command('leech worker') & (filters.private | filters.group | filters.channel) & is_authorized_user)
 async def leech_worker(_: Client, message: Message):
     global current_consume_step
 

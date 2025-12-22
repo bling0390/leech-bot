@@ -1,6 +1,6 @@
 import datetime
 from celery import chain
-from tool.utils import is_admin
+from tool.utils import is_authorized_user
 from constants.worker import Queue
 from pyrogram import Client, filters
 from module.leech.beans.leech_file import LeechFile
@@ -54,9 +54,9 @@ async def retry_single_task(_, query):
 
         create_pending_task(leech_file)
 
-        await send_message_to_admin('✅ <b>Task has retried!</b>')
+        await send_message_to_admin('✅ <b>Task has retried!</b>', chat_id=query.message.chat.id)
     else:
-        await send_message_to_admin('❌ <b>Task not exist or expired</b>')
+        await send_message_to_admin('❌ <b>Task not exist or expired</b>', chat_id=query.message.chat.id)
 
 
 @Client.on_callback_query(filters.regex(f'^{COMMAND_PREFIX}'))
@@ -73,7 +73,7 @@ async def interact_callback(_, query):
         count = retry_specific_tasks(status)
         message = f'✅ <b>{count} tasks has retried!</b>'
 
-    await send_message_to_admin(message)
+    await send_message_to_admin(message, chat_id=query.message.chat.id)
 
 
 def create_pending_task(leech_file: LeechFile):
@@ -86,7 +86,7 @@ def create_pending_task(leech_file: LeechFile):
     ).apply_async()
 
 
-@Client.on_message(filters.command('leech retry') & filters.private & is_admin)
+@Client.on_message(filters.command('leech retry') & (filters.private | filters.group | filters.channel) & is_authorized_user)
 async def leech_retry(_: Client, message: Message):
     await message.reply(
         text='\n\n'.join([

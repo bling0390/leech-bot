@@ -1,6 +1,6 @@
 import prettytable as pt
 
-from tool.utils import is_admin
+from tool.utils import is_authorized_user
 from beans.setting import Setting
 from pyrogram import filters, Client
 from celery.app.control import Control
@@ -42,7 +42,7 @@ def get_restore_setting_buttons(callback_prefix: str) -> list[list[InlineKeyboar
     ]))
 
 
-async def _next(next_step: str):
+async def _next(next_step: str, chat_id: int):
     global current_restore_step, restore_react_value, current_upload_restore, alist_storages
     setting_key = restore_react_value.get('setting', '')
 
@@ -54,11 +54,12 @@ async def _next(next_step: str):
             content=f'Which setting you wanna restore?',
             should_auto_delete=False,
             delete_after_seconds=-1,
-            reply_markup=InlineKeyboardMarkup(buttons)
+            reply_markup=InlineKeyboardMarkup(buttons),
+            chat_id=chat_id
         )
 
     elif next_step == RestoreInteractStep.COMPLETED:
-        m: Message = await send_message_to_admin('Got it, please wait...', False)
+        m: Message = await send_message_to_admin('Got it, please wait...', False, chat_id=chat_id)
 
         current_setting = Setting.objects(
             key=setting_key,
@@ -68,7 +69,7 @@ async def _next(next_step: str):
         await m.delete()
 
         if current_setting is None or getattr(current_setting, 'value') is None:
-            return await send_message_to_admin('❌ <b>Setting not found</b>', False)
+            return await send_message_to_admin('❌ <b>Setting not found</b>', False, chat_id=chat_id)
 
         current_setting.value = None
         current_setting.save()
@@ -89,7 +90,8 @@ async def _next(next_step: str):
 
         await send_message_to_admin(
             f'<pre>| \n| 🎉 Setting has been restored!\n| \n{table.get_string()}</pre>',
-            False
+            False,
+            chat_id=chat_id
         )
 
 
@@ -102,13 +104,13 @@ async def consume_callback(_, query):
     next_restore_step = restore_steps[current_restore_step]
 
     await query.message.delete()
-    await _next(next_restore_step)
+    await _next(next_restore_step, query.message.chat.id)
     current_restore_step = next_restore_step
 
 
-@Client.on_message(filters.command('leech restore') & filters.private & is_admin)
+@Client.on_message(filters.command('leech restore') & (filters.private | filters.group | filters.channel) & is_authorized_user)
 async def leech_restore(_: Client, message: Message):
     global current_restore_step
 
     current_restore_step = RestoreInteractStep.SELECT_RESTORE_SETTING
-    await _next(current_restore_step)
+    await _next(current_restore_step, message.chat.id)

@@ -93,6 +93,8 @@ Alist-bot是一个功能强大的Telegram机器人，能够从各种网络来源
 - `BOT_DOWNLOAD_LOCATION`: 下载文件存储路径
 - `MAXIMUM_LEECH_WORKER`: 最大同时下载任务数
 - `MAXIMUM_SYNC_WORKER`: 最大同时同步任务数
+- `MAXIMUM_NOTIFY_WORKER`: 最大通知 worker 数量（控制 Telegram 推送并发）
+- `DISK_FREE_THRESHOLD_BYTES`: 磁盘剩余空间阈值（字节）。当剩余空间小于等于该值时暂停下载并提醒，设为0可禁用
 - `SHOULD_USE_DATETIME_CATEGORY`: 是否使用日期作为分类目录
 
 ### 数据库配置

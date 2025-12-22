@@ -93,6 +93,8 @@ Alist-bot is a powerful Telegram bot capable of downloading files from various i
 - `BOT_DOWNLOAD_LOCATION`: Download file storage path
 - `MAXIMUM_LEECH_WORKER`: Maximum number of simultaneous download tasks
 - `MAXIMUM_SYNC_WORKER`: Maximum number of simultaneous synchronization tasks
+- `MAXIMUM_NOTIFY_WORKER`: Maximum number of notification workers (controls Telegram push concurrency)
+- `DISK_FREE_THRESHOLD_BYTES`: Disk free-space threshold (bytes). When free space is less than or equal to this value, downloads pause and alerts are sent. Set to 0 to disable.
 - `SHOULD_USE_DATETIME_CATEGORY`: Whether to use date as category directory
 
 ### Database Configuration

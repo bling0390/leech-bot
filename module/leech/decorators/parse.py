@@ -33,6 +33,9 @@ def create_document(f):
             try:
                 leech_file.sync_tool = kwargs.get('sync_tool')
                 leech_file.sync_path = kwargs.get('sync_path')
+                # store chat id for later notification routing
+                request_chat_id = kwargs.get('request_chat_id')
+                leech_file.request_chat_id = str(request_chat_id) if request_chat_id is not None else None
                 leech_file.file_hash = get_redis_unique_key(leech_file)
 
                 chain(

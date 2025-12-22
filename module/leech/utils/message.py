@@ -9,14 +9,24 @@ from tool.telegram_client import get_telegram_client
 from tool.utils import convert_bytes
 
 
+def _resolve_chat_id(chat_id: int | str | None) -> int:
+    target = chat_id if chat_id is not None else TELEGRAM_ADMIN_ID
+
+    try:
+        return int(target)
+    except (TypeError, ValueError):
+        return TELEGRAM_ADMIN_ID
+
+
 async def send_message_to_admin(
         content: str,
         should_auto_delete: bool = True,
         delete_after_seconds: int = 5,
+        chat_id: int | str | None = None,
         **kwargs
 ) -> Message:
     m = await get_telegram_client().send_message(
-        chat_id=TELEGRAM_ADMIN_ID,
+        chat_id=_resolve_chat_id(chat_id),
         disable_web_page_preview=True,
         text=content[:4096],
         parse_mode=ParseMode.HTML,

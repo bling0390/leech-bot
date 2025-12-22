@@ -1,6 +1,6 @@
 import prettytable as pt
 
-from tool.utils import is_admin
+from tool.utils import is_authorized_user
 from beans.setting import Setting
 from pyrogram import filters, Client
 from celery.app.control import Control
@@ -37,7 +37,7 @@ current_upload_setting = {}
 control = Control(app=celery_client)
 
 
-async def _next(next_step: str):
+async def _next(next_step: str, chat_id: int):
     global current_setting_step, setting_react_value, current_upload_setting, alist_storages
     tool = setting_react_value.get('tool', '')
     dest = setting_react_value.get('dest', '')
@@ -47,13 +47,14 @@ async def _next(next_step: str):
             get_upload_tool_buttons(ButtonCallbackPrefix.LEECH_SETTING_UPLOAD_TOOL)
 
         if len(tool_buttons) == 0:
-            return await send_message_to_admin('❌ <b>No sync tool available</b>', False)
+            return await send_message_to_admin('❌ <b>No sync tool available</b>', False, chat_id=chat_id)
 
         return await send_message_to_admin(
             content=f'Current upload tool: {current_upload_setting.get("tool") or "None"}',
             should_auto_delete=False,
             delete_after_seconds=-1,
-            reply_markup=InlineKeyboardMarkup(tool_buttons)
+            reply_markup=InlineKeyboardMarkup(tool_buttons),
+            chat_id=chat_id
         )
 
     elif next_step == SettingInteractStep.SELECT_UPLOAD_DESTINATION:
@@ -67,7 +68,8 @@ async def _next(next_step: str):
                 content=f'Current {LeechFileSyncTool.ALIST.lower()} storage: {current_upload_setting.get("dest") or "None"}',
                 should_auto_delete=False,
                 delete_after_seconds=-1,
-                reply_markup=InlineKeyboardMarkup(storage_buttons)
+                reply_markup=InlineKeyboardMarkup(storage_buttons),
+                chat_id=chat_id
             )
 
         elif tool == LeechFileSyncTool.RCLONE:
@@ -77,11 +79,12 @@ async def _next(next_step: str):
                 delete_after_seconds=-1,
                 reply_markup=InlineKeyboardMarkup(
                     get_rclone_remote_buttons(ButtonCallbackPrefix.LEECH_SETTING_UPLOAD_DESTINATION)
-                )
+                ),
+                chat_id=chat_id
             )
 
     elif next_step == SettingInteractStep.COMPLETED:
-        m: Message = await send_message_to_admin('Got it, please wait...', False)
+        m: Message = await send_message_to_admin('Got it, please wait...', False, chat_id=chat_id)
 
         alist_dest = \
             alist_storages[int(dest)].get('mount_path') if (tool == LeechFileSyncTool.ALIST and dest != '') else None
@@ -112,7 +115,8 @@ async def _next(next_step: str):
 
         await send_message_to_admin(
             f'<pre>| \n| 🎉 Setting has been updated!\n| \n{table.get_string()}</pre>',
-            False
+            False,
+            chat_id=chat_id
         )
 
 
@@ -125,14 +129,14 @@ async def consume_callback(_, query):
     next_setting_step = setting_steps[current_setting_step]
 
     await query.message.delete()
-    await _next(next_setting_step)
+    await _next(next_setting_step, query.message.chat.id)
     current_setting_step = next_setting_step
 
 
-@Client.on_message(filters.command('leech setting') & filters.private & is_admin)
+@Client.on_message(filters.command('leech setting') & (filters.private | filters.group | filters.channel) & is_authorized_user)
 async def leech_setting(_: Client, message: Message):
     global current_setting_step, current_upload_setting
 
     current_upload_setting = getattr(Setting.objects(key=SettingKey.FILE_UPLOAD_DESTINATION).first(), 'value', {})
     current_setting_step = SettingInteractStep.SELECT_UPLOAD_TOOL
-    await _next(current_setting_step)
+    await _next(current_setting_step, message.chat.id)

@@ -88,9 +88,10 @@ def on_task_success(result: LeechFile, sender, **kwargs):
         LeechTask.objects(task_id=sender.request.id) \
             .update_one(status=TaskStatus.DONE, updated_at=datetime.datetime.utcnow())
 
-        LeechMessage(
+        leech_message = LeechMessage(
             phase=TaskType.DOWNLOAD,
             file_id=result.id,
+            receiver=result.request_chat_id,
             content=format_result_message(
                 name=result.name,
                 size=result.size,
@@ -101,7 +102,12 @@ def on_task_success(result: LeechFile, sender, **kwargs):
             ),
             status=MessageStatus.INITIAL,
             file_status=result.status
-        ).save()
+        )
+        leech_message.save()
+        process_notification.apply_async(
+            (leech_message.id,),
+            queue=Queue.FILE_NOTIFY_QUEUE
+        )
 
     except Exception as e:
         logger.error(e)

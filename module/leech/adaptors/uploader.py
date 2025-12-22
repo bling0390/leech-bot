@@ -6,7 +6,7 @@ from celery.apps.worker import Worker
 from typing import Callable, TypeAlias
 from celery.utils.dispatch import Signal
 
-from constants.worker import WorkerStatus
+from constants.worker import WorkerStatus, Queue
 from celery.worker.consumer import Consumer
 
 from module.leech.beans.leech_message import LeechMessage
@@ -21,6 +21,7 @@ from module.leech.constants.leech_file_status import LeechFileStatus
 from tool.worker import celeryd_setup_callback, update_worker_status
 from celery.signals import worker_shutdown, celeryd_after_setup, worker_ready, task_prerun, task_success, task_received
 from tool.mongo_client import EstablishConnection as EstablishMongodbConnection
+from module.leech.adaptors.notifier import process_notification
 
 EstablishMongodbConnection()
 
@@ -87,9 +88,10 @@ def on_task_success(result: LeechFile, sender, **kwargs):
         LeechTask.objects(task_id=sender.request.id)\
             .update_one(status=TaskStatus.DONE, updated_at=datetime.datetime.utcnow())
 
-        LeechMessage(
+        leech_message = LeechMessage(
             phase=TaskType.UPLOAD,
             file_id=result.id,
+            receiver=result.request_chat_id,
             content=format_result_message(
                 name=result.name,
                 size=result.size,
@@ -100,9 +102,12 @@ def on_task_success(result: LeechFile, sender, **kwargs):
             ),
             status=MessageStatus.INITIAL,
             file_status=result.upload_status
-        ).save()
+        )
+        leech_message.save()
+        process_notification.apply_async(
+            (leech_message.id,),
+            queue=Queue.FILE_NOTIFY_QUEUE
+        )
 
     except Exception as e:
         logger.error(e)
-
-

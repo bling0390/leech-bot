@@ -1,4 +1,4 @@
-from tool.utils import is_admin
+from tool.utils import is_authorized_user
 from pyrogram import Client, filters
 from celery.app.control import Control
 from tool.celery_client import celery_client
@@ -26,7 +26,7 @@ async def interact_callback(_, query):
         terminate_specific_tasks(task_type)
         message = f'<b>All pending {task_type.lower()} tasks has terminated!</b>'
 
-    await send_message_to_admin(message)
+    await send_message_to_admin(message, chat_id=query.message.chat.id)
 
 
 def terminate_specific_tasks(task_type: TaskType, task_status: TaskStatus = TaskStatus.INITIAL):
@@ -50,7 +50,7 @@ def terminate_specific_tasks(task_type: TaskType, task_status: TaskStatus = Task
     # )
 
 
-@Client.on_message(filters.command('leech terminate') & filters.private & is_admin)
+@Client.on_message(filters.command('leech terminate') & (filters.private | filters.group | filters.channel) & is_authorized_user)
 async def leech_terminate(_: Client, message: Message):
     await message.reply(
         text='\n\n'.join([

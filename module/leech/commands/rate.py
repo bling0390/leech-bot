@@ -3,7 +3,7 @@ import datetime
 from loguru import logger
 import prettytable as pt
 from beans.worker import Worker
-from tool.utils import is_admin
+from tool.utils import is_authorized_user
 from pyrogram import filters, Client
 from celery.app.control import Control
 from tool.celery_client import celery_client
@@ -155,7 +155,7 @@ async def _next(message: Message, next_step: str):
         )
 
     elif (next_step == RateInteractStep.SELECT_PERIOD and amount < 0) or next_step == RateInteractStep.COMPLETED:
-        m: Message = await send_message_to_admin('Got it, please wait...', False)
+        m: Message = await send_message_to_admin('Got it, please wait...', False, chat_id=message.chat.id)
 
         rate_limit = f'{amount}/{period}' if amount > 0 else 'No limit'
         hostname = workers[worker_index].hostname if worker_index >= 0 else None
@@ -189,9 +189,13 @@ async def _next(message: Message, next_step: str):
 
             table.add_row(['Rate limit', rate_limit], divider=True)
 
-            await send_message_to_admin(f'<pre>| \n| 🎉 Rate limit has been set!\n| \n{table.get_string()}</pre>', False)
+            await send_message_to_admin(
+                f'<pre>| \n| 🎉 Rate limit has been set!\n| \n{table.get_string()}</pre>',
+                False,
+                chat_id=message.chat.id
+            )
         else:
-            await send_message_to_admin('Failed to set rate limit, please try again later.', False)
+            await send_message_to_admin('Failed to set rate limit, please try again later.', False, chat_id=message.chat.id)
 
 
 @Client.on_callback_query(filters.regex('^leech_rate_'))
@@ -207,7 +211,7 @@ async def consume_callback(_, query):
     current_rate_step = next_consume_step
 
 
-@Client.on_message(filters.command('leech rate') & filters.private & is_admin)
+@Client.on_message(filters.command('leech rate') & (filters.private | filters.group | filters.channel) & is_authorized_user)
 async def leech_rate(_: Client, message: Message):
     global current_rate_step
 

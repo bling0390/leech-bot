@@ -30,6 +30,8 @@ class LeechFile(Document):
     location = StringField()
     # path to sync the file
     sync_path = StringField()
+    # telegram chat id that triggered the task
+    request_chat_id = StringField()
     # size of the file
     size = IntField()
     # hash of the file
