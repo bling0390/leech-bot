@@ -7,6 +7,13 @@ import datetime
 import platform
 from loguru import logger
 from rclone_python import rclone
+
+try:
+    asyncio.get_event_loop()
+except RuntimeError:
+    asyncio.set_event_loop(asyncio.new_event_loop())
+
+from pyrogram import Client
 from tool.utils import is_alist_available
 from rclone_python.remote_types import RemoteTypes
 from tool.telegram_client import update_telegram_client
@@ -28,13 +35,6 @@ from config.config import (
     MEGA_AUTHORIZATION_PASSWORD,
     NODE_ENV
 )
-
-try:
-    asyncio.get_event_loop()
-except RuntimeError:
-    asyncio.set_event_loop(asyncio.new_event_loop())
-
-from pyrogram import Client
 
 
 def setup_locale():
