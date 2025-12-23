@@ -41,7 +41,14 @@ class LeechFile(Document):
     #
     updated_at = DateTimeField()
 
-    meta = {'allow_inheritance': True, 'collection': FILE_COLLECTION}
+    meta = {
+        'allow_inheritance': True,
+        'collection': FILE_COLLECTION,
+        'indexes': [
+            ('status', '-created_at'),
+            ('upload_status', '-created_at'),
+        ]
+    }
 
     def get_full_name(self):
         return f'{self.location}/tmp'

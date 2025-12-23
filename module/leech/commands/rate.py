@@ -1,3 +1,4 @@
+import asyncio
 import datetime
 
 from loguru import logger
@@ -11,6 +12,7 @@ from module.leech.utils.button import get_bottom_buttons
 from module.leech.utils.message import send_message_to_admin
 from constants.worker import Hostname, Queue, WorkerStatus, Project
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
+from config.config import LEECH_RATE_CONTROL_TIMEOUT
 
 
 class RateInteractStep:
@@ -76,6 +78,12 @@ async def _next(message: Message, next_step: str):
             hostname__startswith=phase,
             status=WorkerStatus.READY
         )
+
+        if len(workers) == 0:
+            return await message.reply(
+                text='<b>No running worker found for this phase. Please start one first.</b>',
+                reply_markup=InlineKeyboardMarkup([get_bottom_buttons('', should_have_return=False)])
+            )
 
         return await message.reply(
             text='\n\n'.join([
@@ -157,23 +165,48 @@ async def _next(message: Message, next_step: str):
     elif (next_step == RateInteractStep.SELECT_PERIOD and amount < 0) or next_step == RateInteractStep.COMPLETED:
         m: Message = await send_message_to_admin('Got it, please wait...', False, chat_id=message.chat.id)
 
-        rate_limit = f'{amount}/{period}' if amount > 0 else 'No limit'
-        hostname = workers[worker_index].hostname if worker_index >= 0 else None
+        if worker_index < 0 or worker_index >= len(workers):
+            await m.delete()
+            await send_message_to_admin('Please select a worker before applying rate limit.', False, chat_id=message.chat.id)
+            return
 
-        result = control.rate_limit(
-            task_name=f'{Project.LEECH_DOWNLOADER}.process_download' if Hostname.FILE_LEECH_WORKER in phase else f'{Project.LEECH_UPLOADER}.process_upload',
-            rate_limit=rate_limit,
-            destination=[hostname] if hostname else None,
-            reply=True
-        )
+        hostname = workers[worker_index].hostname
+        is_download = Hostname.FILE_LEECH_WORKER in phase
+        task_name = f'{Project.LEECH_DOWNLOADER}.process_download' if is_download else f'{Project.LEECH_UPLOADER}.process_upload'
+        rate_limit = f'{amount}/{period}' if amount > 0 else None
+
+        ping_reply = control.ping(destination=[hostname], timeout=LEECH_RATE_CONTROL_TIMEOUT, reply=True)
+        if not ping_reply:
+            await m.delete()
+            await send_message_to_admin('Target worker is not responding. Please check worker status.', False, chat_id=message.chat.id)
+            return
+
+        try:
+            result = await asyncio.to_thread(
+                control.rate_limit,
+                task_name=task_name,
+                rate_limit=rate_limit,
+                destination=[hostname],
+                reply=True,
+                timeout=LEECH_RATE_CONTROL_TIMEOUT
+            )
+        except Exception as e:
+            logger.error(f'Failed to set rate limit: {e}')
+            await m.delete()
+            await send_message_to_admin('Failed to set rate limit, please try again later.', False, chat_id=message.chat.id)
+            return
 
         await m.delete()
 
-        if len([item for item in result if item.get(hostname).get('ok')]) == 1:
+        ok_replies = [item for item in (result or []) if item.get(hostname) and item.get(hostname).get('ok')]
+
+        if len(ok_replies) == 1:
             worker: Worker = workers[worker_index]
             worker.rate_limit = {'amount': amount, 'period': period} if amount > 0 else None
             worker.updated_at = datetime.datetime.utcnow()
             worker.save()
+
+            rate_limit_display = f'{amount}/{period}' if amount > 0 else 'No limit'
 
             table = pt.PrettyTable(
                 field_names=['Item', 'Current'],
@@ -187,7 +220,7 @@ async def _next(message: Message, next_step: str):
 
             table.add_row(['Worker name', hostname], divider=True)
 
-            table.add_row(['Rate limit', rate_limit], divider=True)
+            table.add_row(['Rate limit', rate_limit_display], divider=True)
 
             await send_message_to_admin(
                 f'<pre>| \n| 🎉 Rate limit has been set!\n| \n{table.get_string()}</pre>',
