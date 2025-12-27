@@ -33,6 +33,7 @@ REDIS_HOST = str(environ.get('REDIS_HOST', config.get('REDIS_HOST', '')))
 REDIS_PORT = int(environ.get('REDIS_PORT', config.get('REDIS_PORT', '6379')))
 REDIS_USERNAME = environ.get('REDIS_USERNAME', config.get('REDIS_USERNAME', 'default'))
 REDIS_PASSWORD = environ.get('REDIS_PASSWORD', config.get('REDIS_PASSWORD', None))
+REDIS_BROKER_URL = environ.get('REDIS_BROKER_URL', config.get('REDIS_BROKER_URL', None))
 SKIP_DUPLICATE_LINK_WITHIN_DAYS = int(
     environ.get('SKIP_DUPLICATE_LINK_WITHIN_DAYS', config.get('SKIP_DUPLICATE_LINK_WITHIN_DAYS', '0'))
 )
