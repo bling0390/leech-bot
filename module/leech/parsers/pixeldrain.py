@@ -18,12 +18,27 @@ class Pixeldrain(IParser):
         leech_files = []
         parse_result = urlparse(link)
 
-        file_id = parse_result.path.split('/')[-1] if parse_result.path is not None else None
-
-        if file_id is None:
+        path_parts = [part for part in (parse_result.path or '').split('/') if part]
+        if not path_parts:
             return []
 
-        if '/u/' in parse_result.path:
+        mode = path_parts[0]
+
+        file_id: str | None = None
+        list_id: str | None = None
+
+        if mode in ('u', 'd'):
+            file_id = path_parts[1] if len(path_parts) > 1 else None
+        elif mode == 'l':
+            list_id = path_parts[1] if len(path_parts) > 1 else None
+        elif mode == 'api' and len(path_parts) >= 3:
+            api_type = path_parts[1]
+            if api_type == 'file':
+                file_id = path_parts[2]
+            elif api_type == 'list':
+                list_id = path_parts[2]
+
+        if file_id is not None:
             actual_link = f'{parse_result.scheme}://{parse_result.netloc}/api/file/{file_id}'
 
             response = httpx.get(f'{actual_link}/info').json()
@@ -39,8 +54,8 @@ class Pixeldrain(IParser):
             )
             leech_file.location = f'{BOT_DOWNLOAD_LOCATION}/{get_redis_unique_key(leech_file)}'
             leech_files.append(leech_file)
-        elif '/l/' in parse_result.path:
-            response = httpx.get(f'{parse_result.scheme}://{parse_result.netloc}/api/list/{file_id}').json()
+        elif list_id is not None:
+            response = httpx.get(f'{parse_result.scheme}://{parse_result.netloc}/api/list/{list_id}').json()
 
             if not response['success']:
                 return []

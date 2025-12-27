@@ -1,0 +1,37 @@
+# Python bytecode / caches
+__pycache__/
+*.py[cod]
+*$py.class
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+
+# Virtualenvs
+.venv/
+venv/
+env/
+.env/
+
+# Editor/OS
+.idea/
+.vscode/
+.DS_Store
+
+# Logs / runtime data
+logs/
+*.log
+*_logs.txt
+
+# Pyrogram session files (contain auth/session data)
+*.session
+*.session-journal
+
+# Local config (contains secrets)
+config.yaml
+
+# Downloads / temp files (commonly configured as BOT_DOWNLOAD_LOCATION)
+download/
+downloads/
+tmp/
