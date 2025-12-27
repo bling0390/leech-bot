@@ -55,6 +55,8 @@ Alist-bot是一个功能强大的Telegram机器人，能够从各种网络来源
    docker-compose up -d
    ```
 
+> 提示：Docker 镜像已固定到 `python:3.11`（见 `Dockerfile:1`）以避免 `python:3` 标签滚动更新导致的不兼容；本地运行也建议使用 Python 3.11。
+
 ### 手动安装
 
 1. 克隆仓库：
