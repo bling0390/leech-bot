@@ -125,6 +125,32 @@ Alist-bot是一个功能强大的Telegram机器人，能够从各种网络来源
 3. 按照提示选择下载源和目标存储
 4. 等待任务完成并接收通知
 
+## Web API
+
+- 启动：`uvicorn api.http.main:app --host 0.0.0.0 --port 8000`，或通过 `docker-compose up -d webapi`。
+- 环境变量：
+  - `API_KEY`（可选）：开启后需在请求头携带 `X-API-Key`。
+  - `CELERY_TASK_NAME`（默认 `tasks.download`，请与实际 Celery 任务名对齐）。
+  - `CELERY_QUEUE`（默认 `download`）。
+  - `CELERY_BROKER_URL`（默认 `redis://redis:6379/0`）。
+  - `REDIS_URL`（可选，用于幂等键存储，默认回退至 Celery broker 或 config.yaml 中的 Redis 配置）。
+- 幂等：请求头带 `Idempotency-Key` 时命中缓存直接返回上次的 `task_id` 与 `files`；Redis 不可用时自动降级继续处理。
+- 健康检查：`GET /healthz` 返回 `{"status":"ok"}`。
+- 任务提交：
+  ```bash
+  curl -X POST http://localhost:8000/leech \
+    -H 'Content-Type: application/json' \
+    -H 'X-API-Key: <可选_API_KEY>' \
+    -H 'Idempotency-Key: demo-123' \
+    -d '{"link":"https://example.com/file","target":"alist","path":"/tmp","headers":{"User-Agent":"demo"},"dry_run":true}'
+  ```
+- 主要错误码：
+  - `PARSE_FAILED`（400）：链接无法解析或未匹配解析器。
+  - `QUEUE_UNAVAILABLE`（503）：Celery/队列不可用。
+  - `UNAUTHORIZED`（401）：API Key 不匹配。
+  - `BAD_REQUEST`（400）：参数校验失败。
+  - `INTERNAL_ERROR`（500）：未捕获异常。
+
 ## 常见问题
 
 - **机器人无响应**：检查Telegram API配置和网络连接

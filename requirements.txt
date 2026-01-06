@@ -18,3 +18,7 @@ pymongo
 click
 PyDispatcher
 mongoengine
+fastapi
+uvicorn[standard]
+pydantic
+pydantic-settings

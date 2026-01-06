@@ -26,6 +26,7 @@ def create_document(f):
     @functools.wraps(f)
     def wrapper(self, link: str, **kwargs) -> list[LeechFile]:
         leech_files: list[LeechFile] = f(self, link, **kwargs)
+        dry_run: bool = kwargs.get('dry_run', False)
 
         queued_files = []
 
@@ -34,6 +35,10 @@ def create_document(f):
                 leech_file.sync_tool = kwargs.get('sync_tool')
                 leech_file.sync_path = kwargs.get('sync_path')
                 leech_file.file_hash = get_redis_unique_key(leech_file)
+
+                if dry_run:
+                    queued_files.append(leech_file)
+                    continue
 
                 chain(
                     process_download.signature(

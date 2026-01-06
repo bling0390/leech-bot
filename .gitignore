@@ -1,0 +1,22 @@
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Environments
+.env
+.venv/
+venv/
+
+# IDE / tooling
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+
+# Project artifacts
+bot.session
+_leech-bot_logs.txt
+downloads/
+logs/

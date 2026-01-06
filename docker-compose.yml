@@ -27,6 +27,27 @@ services:
       - "/root/download/:/root/download/"
       - "/root/logs/:/root/logs/"
 
+  webapi:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: leech_webapi
+    container_name: leech_webapi
+    command: uvicorn api.http.main:app --host 0.0.0.0 --port 8000
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_TASK_NAME=tasks.download
+      - CELERY_QUEUE=download
+      # - API_KEY=changeme
+      # - REDIS_URL=redis://redis:6379/0
+    restart: always
+    networks:
+      - repositories_default
+    depends_on:
+      - alist_leech_bot
+    ports:
+      - "8000:8000"
+
 networks:
     repositories_default:
         external: true
