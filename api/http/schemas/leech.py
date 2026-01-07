@@ -1,16 +1,17 @@
 from typing import Any, List, Optional
-from uuid import UUID
 from urllib.parse import urlparse
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import Field, field_validator
+
+from api.http.constants import ParseStatus
+from api.http.schemas.base import ApiResponse, SchemaBase
 
 
-class LeechRequest(BaseModel):
+class LeechRequest(SchemaBase):
     link: str
     target: Optional[str] = None
     path: Optional[str] = None
-    headers: Optional[dict[str, str]] = None
-    dry_run: Optional[bool] = None
+    tool: Optional[str] = None
 
     @field_validator('link')
     @classmethod
@@ -25,19 +26,11 @@ class LeechRequest(BaseModel):
         return value
 
 
-class LeechSuccessResponse(BaseModel):
-    request_id: UUID
+class LeechResponseData(SchemaBase):
     task_id: str
-    status: str = Field(default='queued')
+    status: str = Field(default=ParseStatus.QUEUED)
     files: List[Any]
 
 
-class ErrorDetail(BaseModel):
-    code: str
-    message: str
-
-
-class ErrorResponse(BaseModel):
-    request_id: UUID
-    error: ErrorDetail
-
+class LeechSuccessResponse(ApiResponse):
+    data: LeechResponseData

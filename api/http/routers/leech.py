@@ -5,10 +5,12 @@ from uuid import uuid4
 from fastapi import APIRouter, Depends, Request
 from redis import Redis
 
+from api.http.constants import HEADER_IDEMPOTENCY_KEY, HEADER_REQUEST_ID, ParseStatus
 from api.http.core.security import api_key_auth
 from api.http.core.settings import Settings, get_settings
 from api.http.deps import get_redis_client
-from api.http.schemas.leech import ErrorResponse, LeechRequest, LeechSuccessResponse
+from api.http.schemas.base import ErrorResponse
+from api.http.schemas.leech import LeechRequest, LeechResponseData, LeechSuccessResponse
 from api.http.services.idem_service import IdempotencyService
 from api.http.services.parse_service import parse_link, serialize_files
 from api.http.services.queue_service import QueueService
@@ -34,8 +36,8 @@ async def leech_endpoint(
     settings: Settings = Depends(get_settings),
     redis_client: Optional[Redis] = Depends(get_redis_client),
 ):
-    request_id = getattr(request.state, 'request_id', None) or str(uuid4())
-    idempotency_key = request.headers.get('Idempotency-Key')
+    request_id = request.headers.get(HEADER_REQUEST_ID) or getattr(request.state, 'request_id', None) or str(uuid4())
+    idempotency_key = request.headers.get(HEADER_IDEMPOTENCY_KEY)
     idem_service = IdempotencyService(redis_client)
 
     if idempotency_key:
@@ -53,18 +55,19 @@ async def leech_endpoint(
                 },
             )
             return LeechSuccessResponse(
+                code=0,
+                message='success',
                 request_id=request_id,
-                task_id=task_id,
-                status='queued',
-                files=files if isinstance(files, list) else [],
+                data=LeechResponseData(
+                    task_id=task_id,
+                    status=ParseStatus.QUEUED,
+                    files=files if isinstance(files, list) else [],
+                ),
             )
 
     parse_options: dict[str, Any] = payload.model_dump(exclude_none=True)
     parse_options.pop('link', None)
     parse_options['request_id'] = request_id
-
-    # Default to dry_run to avoid double queueing inside parser decorators.
-    parse_options['dry_run'] = parse_options.get('dry_run', True)
 
     files = parse_link(payload.link, request_id, parse_options)
     serialized_files = serialize_files(files)
@@ -74,7 +77,7 @@ async def leech_endpoint(
         'link': payload.link,
         'target': payload.target,
         'path': payload.path,
-        'headers': payload.headers,
+        'tool': payload.tool,
         'files': serialized_files,
     }
 
@@ -101,8 +104,12 @@ async def leech_endpoint(
     )
 
     return LeechSuccessResponse(
+        code=0,
+        message='success',
         request_id=request_id,
-        task_id=task_id,
-        status='queued',
-        files=serialized_files,
+        data=LeechResponseData(
+            task_id=task_id,
+            status=ParseStatus.QUEUED,
+            files=serialized_files,
+        ),
     )
