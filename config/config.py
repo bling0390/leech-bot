@@ -22,6 +22,7 @@ ALIST_TOKEN = str(environ.get('ALIST_TOKEN', config.get('ALIST_TOKEN', '')))
 BOT_DOWNLOAD_LOCATION = str(environ.get('BOT_DOWNLOAD_LOCATION', config.get('BOT_DOWNLOAD_LOCATION', ''))).rstrip('/')
 MAXIMUM_LEECH_WORKER = int(environ.get('MAXIMUM_LEECH_WORKER', config.get('MAXIMUM_LEECH_WORKER', '1')))
 MAXIMUM_SYNC_WORKER = int(environ.get('MAXIMUM_SYNC_WORKER', config.get('MAXIMUM_SYNC_WORKER', '1')))
+MAXIMUM_PARSE_WORKER = int(environ.get('MAXIMUM_PARSE_WORKER', config.get('MAXIMUM_PARSE_WORKER', '1')))
 WRITE_STREAM_CONNECT_TIMEOUT = float(
     environ.get('WRITE_STREAM_CONNECT_TIMEOUT', config.get('WRITE_STREAM_CONNECT_TIMEOUT', DEFAULT_TIMEOUT_CONFIG))
 )
@@ -53,3 +54,9 @@ MONGO_USERNAME = environ.get('MONGO_USERNAME', config.get('MONGO_USERNAME'))
 MONGO_PASSWORD = environ.get('MONGO_PASSWORD', config.get('MONGO_PASSWORD'))
 MONGO_DATABASE_NAME = environ.get('MONGO_DATABASE_NAME', config.get('MONGO_DATABASE_NAME'))
 NODE_ENV = environ.get('NODE_ENV', config.get('NODE_ENV', 'PRODUCTION'))
+CELERY_DOWNLOAD_TASK_FUNCTION_NAME = environ.get('CELERY_DOWNLOAD_TASK_FUNCTION_NAME',
+                                                 config.get('CELERY_DOWNLOAD_TASK_FUNCTION_NAME',
+                                                            'module.leech.adaptors.downloader.process_download'))
+CELERY_UPLOAD_TASK_FUNCTION_NAME = environ.get('CELERY_DOWNLOAD_TASK_FUNCTION_NAME',
+                                               config.get('CELERY_DOWNLOAD_TASK_FUNCTION_NAME',
+                                                          'module.leech.adaptors.uploader.process_upload'))

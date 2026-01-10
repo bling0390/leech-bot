@@ -24,7 +24,8 @@ from tool.utils import is_admin, open_celery_worker_process
 from tool.telegram_client import get_telegram_client
 from pyrogram.types import (InlineKeyboardButton, InlineKeyboardMarkup, Message)
 from module.leech.adaptors.parser import execute_parse_link
-from config.config import TELEGRAM_ADMIN_ID, MAXIMUM_LEECH_WORKER, MAXIMUM_SYNC_WORKER, TELEGRAM_CHANNEL_ID
+from config.config import TELEGRAM_ADMIN_ID, MAXIMUM_LEECH_WORKER, MAXIMUM_SYNC_WORKER, TELEGRAM_CHANNEL_ID, \
+    MAXIMUM_PARSE_WORKER
 
 leech_prompt_input = LeechPromptInput()
 alist_storages = []
@@ -96,6 +97,13 @@ def start_celery_process():
         f'{Hostname.FILE_SYNC_WORKER}@{Queue.FILE_SYNC_QUEUE}',
         generate_queue_names(Queue.FILE_SYNC_QUEUE, LeechFileSyncTool),
         MAXIMUM_SYNC_WORKER
+    )
+
+    open_celery_worker_process(
+        Project.LEECH_PARSER,
+        f'{Hostname.LINK_PARSE_WORKER}@{Queue.LINK_PARSE_QUEUE}',
+        Queue.LINK_PARSE_QUEUE,
+        MAXIMUM_PARSE_WORKER
     )
 
 

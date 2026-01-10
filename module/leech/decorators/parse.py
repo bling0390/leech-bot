@@ -3,9 +3,9 @@ from celery import chain
 from loguru import logger
 from constants.worker import Queue
 from tool.utils import get_redis_unique_key
+from tool.celery_client import celery_client
 from module.leech.beans.leech_file import LeechFile
-from module.leech.adaptors.uploader import process_upload
-from module.leech.adaptors.downloader import process_download
+from config.config import CELERY_DOWNLOAD_TASK_FUNCTION_NAME, CELERY_UPLOAD_TASK_FUNCTION_NAME
 
 
 def catch_parse_exception(f):
@@ -36,11 +36,15 @@ def create_document(f):
                 leech_file.file_hash = get_redis_unique_key(leech_file)
 
                 chain(
-                    process_download.signature(
+                    celery_client.signature(
+                        CELERY_DOWNLOAD_TASK_FUNCTION_NAME,
                         (leech_file,),
                         queue=f'{Queue.FILE_DOWNLOAD_QUEUE}@{leech_file.tool}'
                     ),
-                    process_upload.signature(queue=f'{Queue.FILE_SYNC_QUEUE}@{leech_file.sync_tool}')
+                    celery_client.signature(
+                        CELERY_UPLOAD_TASK_FUNCTION_NAME,
+                        queue=f'{Queue.FILE_SYNC_QUEUE}@{leech_file.sync_tool}'
+                    )
                 ).apply_async()
 
                 leech_file.save(force_insert=True)
